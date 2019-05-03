@@ -21,8 +21,12 @@ data_use_sums$as.factor.formats. <- factor(data_use_sums$as.factor.formats., lev
 
 ggplot(data_use_sums, aes(y=perc, x=as.factor.formats.,fill=as.factor.formats., ymin=0)) + 
   geom_bar(stat="identity",width=0.6) +
-  labs(x="Data format", y="Percent", title="Data formats used") +
+  labs(x="Data format", y="Percent") +
   scale_fill_brewer(palette='Spectral') +
   ylim(0,80) +
-  theme(legend.position="none") +
-  scale_x_discrete(labels = function(x) str_wrap(x, width = 10))
+  theme(legend.position="none",
+        axis.text=element_text(size=12),
+        legend.text = element_text(size=12),
+        strip.text.x=element_text(size=12),
+        axis.title = element_text(size=14)) +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 5))

@@ -24,5 +24,9 @@ ggplot(data_use_sums, aes(fill=use, y=sums, x=use)) +
   facet_wrap(dataService~., ncol=1) +
   coord_flip() +
   scale_fill_brewer(palette="Spectral",direction=-1) +
-  labs(x="Use", y="Counts", title="Data access systems") +
-  theme(legend.title=element_blank())
+  labs(x="Use", y="Percent") +
+  theme(legend.title=element_blank(),
+        axis.text=element_text(size=12),
+        legend.text = element_text(size=12),
+        strip.text.x=element_text(size=12),
+        axis.title = element_text(size=14))

@@ -24,13 +24,18 @@ data_use_sums <- data.frame(as.factor(formats), perc)
 data_use_sums$as.factor.formats. <- factor(data_use_sums$as.factor.formats., levels=data_use_sums$as.factor.formats.[order(data_use_sums$perc)])
 
 colourCount = length(unique(data_use_sums$perc))
-getPalette = colorRampPalette(brewer.pal(9, "Set1"))
+getPalette = colorRampPalette(brewer.pal(11, "Spectral"))
 
 ggplot(data_use_sums, aes(y=perc, x=as.factor.formats.,fill=getPalette(colourCount), ymin=0)) + 
   geom_bar(stat="identity",width=0.6) +
-  labs(x="Programming language", y="Percent", title="Programming language used for data analysis tasks") +
+  labs(x="Programming language", y="Percent") +
   scale_fill_manual(values=getPalette(colourCount)) +
   ylim(0,80) +
   coord_flip()+
-  theme(legend.position="none") +
+  theme(legend.position="none",
+        axis.text=element_text(size=12),
+        legend.text = element_text(size=12),
+        strip.text.x=element_text(size=12),
+        axis.title = element_text(size=14),
+        aspect.ratio=2/1) +
   scale_x_discrete(labels = function(x) str_wrap(x, width = 10))

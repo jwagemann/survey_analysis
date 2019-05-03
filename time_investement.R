@@ -16,8 +16,13 @@ data_use_sums$as.factor.time_investment. <-factor(data_use_sums$as.factor.time_i
 
 ggplot(data_use_sums, aes(y=perc, x=as.factor.time_investment.,fill=as.factor.time_investment., ymin=0)) + 
   geom_bar(stat="identity",width=0.6) +
-  labs(x="Motivation to invest time", y="Percent", title="Would you invest time and resources to work with data in a complex or non-familiar format?") +
+  labs(x="Motivation to invest time", y="Percent") +
   scale_fill_brewer(palette='Spectral') +
   ylim(0,80) +
-  theme(legend.position="none") +
-  scale_x_discrete(labels = function(x) str_wrap(x, width = 10))
+  theme(legend.position="none",
+        axis.text=element_text(size=12),
+        legend.text = element_text(size=12),
+        strip.text.x=element_text(size=12),
+        axis.title = element_text(size=14),
+        aspect.ratio=2/1) +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 5))

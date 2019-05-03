@@ -2,18 +2,21 @@
 install.packages(ddply)
 library(likert)
 library(plyr)
+require(ggplot2)
 
-setwd('/Users/julia_wagemann/Documents/Notebooks/phd/survey_analysis/')
+setwd('/Users/julia_wagemann/Documents/github//survey_analysis/')
 
 df_new <- read.csv('20190131_final_results_header_modified.csv', header=TRUE, na.string="")
+
+
+# What applications are you interested in doing with Big Earth Data?
 
 df_likert_35 <- df_new[, c('X3.5.machine.learning',
                         'X3.5.web.applications',
                         'X3.5.data.visualizations',
                         'X3.5.global.regional.analyses',
                         'X3.5.Analysis.over.long.time.spans',
-                        'X3.5.time.series.analysis',
-                        'X3.5.other')]
+                        'X3.5.time.series.analysis')]
 
 levels_35 <- c('Not at all interested', 'Not interested', 'Neither not interested nor interested', 'Interested', 'Very much interested')
 
@@ -24,18 +27,29 @@ levels_35 <- c('Not at all interested', 'Not interested', 'Neither not intereste
 #                        'X3.7.Sharing.results',
 #                        'X3.7.Importance.task.parallelisation')]
 
+df_likert_43 <- df_new[, c('X4.3.Download.service',
+                           'X4.3.cloud.computing.infrastructure',
+                           'X4.3.ogc.service',
+                           'X4.3.custom.api.opendap',
+                           'X4.3.virtual.research.infrastructure',
+                           'X4.3.data.cube.technology',
+                           'X4.3.spatial.array.database')]
+
+levels_43 <- c('I currently use this kind of service', 'I would like to use or continue to use this kind of service in the future', 'I am not interested in this kind of service')
+
+# How satisfied are you with the current data access service you use?
 df_likert_44 <- df_new[, c('X4.4.download.service',
                         'X4.4.cloud.computing.infrastructure',
                         'X4.4.ogc.service',
                         'X4.4.custom.api.opendap',
                         'X4.4.virtual.research.infrastructure',
                         'X4.4.data.cube.technology',
-                        'X4.4.spatial.array.database',
-                        'X4.4.other')]
+                        'X4.4.spatial.array.database')]
 
 levels_44 <- c('Very dissatisfied', 'Dissatisfied', 'Neither satisfied nor dissatisfied', 'Satisfied', 'Very satisfied')
 
 
+# How do you process and analyse data? (Never, Sometimes, Always)
 df_likert_45 <- df_new[, c('X4.5.cloud.code.editor',
                         'X4.5.code.routines.access.cloud.services',
                         'X4.5.code.routines.python.r',
@@ -44,7 +58,7 @@ df_likert_45 <- df_new[, c('X4.5.cloud.code.editor',
 
 levels_45 <- c('Never', 'Sometimes', 'Always')
 
-
+# Please rate how important the follwoing tasks are for you?
 df_likert_46 <- df_new[, c('X4.6.server.cloud.processing',
                         'X4.6.parallel.computing',
                         'X4.6.time.series.retrieval',
@@ -56,7 +70,7 @@ df_likert_46 <- df_new[, c('X4.6.server.cloud.processing',
 
 levels_46 <- c('Not at all important', 'Not important', 'Neither not important nor important', 'Important', 'Very important')
 
-
+# What are currently the greates obstacles accessing and working with Big Earth Data?
 df_rating_51 <- df_new[,c('X5.1.growing.data.volume',
                         'X5.1.limited.processing.capacity',
                         'X5.1.complex.data.formats',
@@ -68,8 +82,7 @@ df_rating_51 <- df_new[,c('X5.1.growing.data.volume',
                         'X5.1.too.many.data.platforms',
                         'X5.1.restricted.data.services',
                         'X5.1.lack.of.tools',
-                        'X5.1.data.services.cost',
-                        'X5.1.other')]
+                        'X5.1.data.services.cost')]
 
 df_likert_51 <- data.frame(list(ifelse(df_rating_51==1,'No obstacle at all', 
                        ifelse(df_rating_51==2, 'No obstacle', 
@@ -80,11 +93,12 @@ df_likert_51 <- data.frame(list(ifelse(df_rating_51==1,'No obstacle at all',
 levels_51 <- c('No obstacle at all', 'No obstacle', 'Neither no obstacle nor an obstacle', 'An obstacle', 'A great obstacle')
 
 
+# How much are you interested in migrating your processing tasks to a cloud service?
 df_likert_61 <- df_new[, c('X6.1')]
 
 levels_61 <- c('Not at all interested', 'Not interested', 'Neither not interested nor interested', 'Interested', 'Very interested')
 
-
+# How strong do you consider the following security aspects as a risk of cloud services?
 df_likert_65 <- df_new[, c('X6.5.data.integrity',
                         'X6.5.data.breaches',
                         'X6.5.data.loss',
@@ -97,6 +111,9 @@ levels_65 <- c('No risk at all','Might be a risk, but not important for me', 'Ri
 
 df_likert_35_ord <- lapply(df_likert_35, function(x) ordered(x, levels = levels_35))
 df_likert_35_res <- do.call(data.frame, df_likert_35_ord)
+
+df_likert_43_ord <- lapply(df_likert_43, function(x) ordered(x, levels = levels_43))
+df_likert_43_res <- do.call(data.frame, df_likert_43_ord)
 
 df_likert_44_ord <- lapply(df_likert_44, function(x) ordered(x, levels = levels_44))
 df_likert_44_res <- do.call(data.frame, df_likert_44_ord)
@@ -122,8 +139,16 @@ names(df_likert_35_res) <- c(
   X3.5.data.visualizations="Data visualizations",
   X3.5.global.regional.analyses="Global / regional data analysis",
   X3.5.Analysis.over.long.time="Analyses over long time spans",
-  X3.5.time.series.analysis="Time-series analysis",
-  X3.5.other="Other")
+  X3.5.time.series.analysis="Time-series analysis")
+
+names(df_likert_43_res) <- c(
+  X4.3.Download.service = 'Download Service from respective data providers',
+  X4.3.cloud.computing.infrastructure = 'Cloud computing infrastructure',
+  X4.3.ogc.service = 'via an OGC web service, e.g. WMS or WCS',
+  X4.3.custom.api.opendap = 'via  a custom API or an OpeNDAP server from a respective data provider',
+  X4.3.virtual.research.infrastructure = 'via a Virtual Research Infrastructure',
+  X4.3.data.cube.technology = 'via a Data Cube technology',
+  X4.3.spatial.array.database = 'via a spatial or array database')
 
 names(df_likert_44_res) <- c(
   X4.4.download.service = 'Download Service from respective data providers',
@@ -132,8 +157,7 @@ names(df_likert_44_res) <- c(
   X4.4.custom.api.opendap = 'via  a custom API or an OpeNDAP server from a respective data provider',
   X4.4.virtual.research.infrastructure = 'via a Virtual Research Infrastructure',
   X4.4.data.cube.technology = 'via a Data Cube technology',
-  X4.4.spatial.array.database = 'via a spatial or array database',
-  X4.4.other = 'Other')
+  X4.4.spatial.array.database = 'via a spatial or array database')
 
 names(df_likert_45_res) <- c(
   X4.5.cloud.code.editor = "with a code editor in the cloud",
@@ -165,8 +189,8 @@ names(df_likert_51_res) <- c(
   X5.1.too.many.data.platforms = 'Too many data platforms and portals',
   X5.1.restricted.data.services = 'Data services are too restricted to access large volumes of data',
   X5.1.lack.of.tools = 'Lacking easy-to-use tools for access, preprocessing, visualisation and evaluation',
-  X5.1.data.services.cost = 'Cost of data services (cost for non-open data or cost for processing services)',
-  X5.1.other = 'Other')
+  X5.1.data.services.cost = 'Cost of data services (cost for non-open data or cost for processing services)'
+)
 
 names(df_likert_61_res) <- c(
   X6.1="How much are you interested in migrating your processing tasks to a cloud service")
@@ -180,6 +204,7 @@ names(df_likert_65_res) <- c(
   X6.5.other="Other")
 
 likertObj_35 <- likert(df_likert_35_res)
+likertObj_43 <- likert(df_likert_43_res)
 likertObj_44 <- likert(df_likert_44_res)
 likertObj_45 <- likert(df_likert_45_res)
 likertObj_46 <- likert(df_likert_46_res)
@@ -201,18 +226,49 @@ plot(likertObj_35)
 plot(likertObj_44)
 plot(likertObj_45)
 plot(likertObj_46)
-plot(likertObj_51, ordered=TRUE)
-plot(likertObj_61)
-plot(likertObj_65, center=2, include.center=TRUE)
-
-plot(likertObj, ordered=FALSE) #Specify the exact order of the y-axis
-
-plot(likertObj, centered=FALSE, wrap=30)
-plot(likertObj, center=4, wrap=30)
-plot(likertObj, center=2, wrap=30)
-plot(likertObj, center=3, include.center=FALSE, wrap=30)
-
-plot(likertObj_45, center=1.5, include.center=TRUE, wrap=20)
-plot(likertObj, plot.percents=TRUE, plot.percent.low=FALSE, plot.percent.high=FALSE)
+plot(likertObj_44, ordered=T,wrap=30, text.size=5)
+test <- plot(likertObj_61, wrap=40, text.size=5)
 
 
+
+
+
+data_applications <- plot(likertObj_35, center=3, include.center=TRUE,ordered=TRUE, text.size=4, panel.arrange='h', digits=3, wrap=15)
+data_applications + theme(legend.text=element_text(size=12),
+                          axis.text = element_text(size=14))
+
+data_systems <- plot(likertObj_43, centered=FALSE, ordered=TRUE, text.size=4, panel.arrange='h', digits=3, wrap=30, colors=c('cornsilk2','darkseagreen3','gray97'))
+data_systems+ theme(legend.text=element_text(size=12),
+                    legend.direction="vertical",
+                    axis.text = element_text(size=14))
+
+data_system_satisfaction <- plot(likertObj_44, ordered=TRUE,wrap=30, text.size=3, include.center=TRUE)
+data_system_satisfaction +theme(legend.text=element_text(size=12),
+                                legend.direction="horizontal",
+                                axis.text = element_text(size=14))
+
+data_challenges <- plot(likertObj_51, ordered=TRUE,wrap=30, text.size=, include.center=FALSE)
+data_challenges +theme(legend.text=element_text(size=12),
+                                legend.direction="horizontal",
+                                axis.text = element_text(size=9.5))
+#plot(likertObj, ordered=FALSE) #Specify the exact order of the y-axis
+
+#plot(likertObj, centered=FALSE, wrap=30)
+#plot(likertObj, center=4, wrap=30)
+#plot(likertObj, center=2, wrap=30)
+#plot(likertObj, center=3, include.center=FALSE, wrap=30)
+
+#plot(likertObj_45, center=1.5, include.center=FALSE, wrap=20)
+#plot(likertObj, plot.percents=TRUE, plot.percent.low=FALSE, plot.percent.high=FALSE)
+
+#test + theme(legend.text=element_text(size=12),aspect.ratio=1/2,
+#             axis.text = element_text(size=12))
+
+#challenges <- plot(likertObj_51, ordered=TRUE,wrap=40, test.size=3.5)
+#challenges + theme(legend.text=element_text(size=10),
+#                   axis.text = element_text(size=10))
+
+
+#satisfaction <- plot(likertObj_44, ordered=TRUE,wrap=20, test.size=3.5)
+#satisfaction + theme(legend.text=element_text(size=10),
+#                   axis.text = element_text(size=10))

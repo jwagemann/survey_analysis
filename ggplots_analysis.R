@@ -13,7 +13,7 @@ surveyData <- read.csv('./20190131_final_results.csv', header = TRUE)
 dataUse <- surveyData[,14:21]
 
 A = tidyr::separate(dataUse,col=1,sep="[;]", into=c("A1","A2"), remove=TRUE)
-B = tidyr::separate(dataUse,col=2,sep="[;]", into=c("B1","B2"), remove=TRUE)
+B = tidyr::separate(dataUse,col=2,sep="[;]", into=c("B1","B2"), remvove=TRUE)
 C = tidyr::separate(dataUse,col=3,sep="[;]", into=c("C1","C2"), remove=TRUE)
 D = tidyr::separate(dataUse,col=4,sep="[;]", into=c("D1","D2"), remove=TRUE)
 E = tidyr::separate(dataUse,col=5,sep="[;]", into=c("E1","E2"), remove=TRUE)
@@ -50,18 +50,23 @@ use <- rep(c("Current", "Future"),7)
 sums <- c(freqs$A1[2,2],freqs$A2[,2],freqs$B1[2,2],freqs$B2[,2],freqs$C1[2,2],freqs$C2[,2],freqs$D1[2,2],freqs$D2[,2],freqs$E1[2,2],freqs$E2[,2],
           freqs$F1[2,2],freqs$F2[,2],freqs$G1[2,2],freqs$G2[,2])
 
-data_use_sums <- data.frame(dataType, use, sums)
-tiff("test.tiff", units="in", width=740, height=700, res=150)
+perc <- sums /213 * 100
+
+data_use_sums <- data.frame(dataType, use, perc)
+
 # insert ggplot code
 
 # Grouped
-ggplot(data_use_sums, aes(fill=use, y=sums, x=use)) + 
+ggplot(data_use_sums, aes(fill=use, y=perc, x=use)) + 
   geom_bar(stat="identity",width=0.7) +
   facet_wrap(dataType~., ncol=1) +
   coord_flip() +
   scale_fill_manual("use", values = c("Current"='#3678DB', "Future"='#98BCFC')) +
-  labs(x="Use", y="Counts", title="Current and future data use", Colour="Data use") +
-  theme(legend.title=element_blank())
+  labs(x="Use", y="Percent", Colour="Data use") +
+  theme(legend.title=element_blank(),axis.text=element_text(size=12),
+        legend.text = element_text(size=12),
+        strip.text.x=element_text(size=12),
+        axis.title = element_text(size=14))
 
 dev.off()
   
