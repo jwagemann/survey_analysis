@@ -3,10 +3,12 @@ install.packages(ddply)
 library(likert)
 library(plyr)
 require(ggplot2)
+library(reshape2)
+library(RColorBrewer)
 
 setwd('/Users/julia_wagemann/Documents/github//survey_analysis/')
 
-df_new <- read.csv('20190131_final_results_header_modified.csv', header=TRUE, na.string="")
+df_new <- read.csv('./data/20190131_final_results_header_modified.csv', header=TRUE, na.string="")
 
 
 # What applications are you interested in doing with Big Earth Data?
@@ -233,11 +235,11 @@ test <- plot(likertObj_61, wrap=40, text.size=5)
 
 
 
-data_applications <- plot(likertObj_35, center=3, include.center=TRUE,ordered=TRUE, text.size=4, panel.arrange='h', digits=3, wrap=15)
+data_applications <- plot(likertObj_35, centered=FALSE, include.center=TRUE, text.size=4, panel.arrange='h', digits=1, wrap=15, include.histogram=TRUE)
 data_applications + theme(legend.text=element_text(size=12),
                           axis.text = element_text(size=14))
 
-data_systems <- plot(likertObj_43, centered=FALSE, ordered=TRUE, text.size=4, panel.arrange='h', digits=3, wrap=30, colors=c('cornsilk2','darkseagreen3','gray97'))
+data_systems <- plot(likertObj_43, centered=FALSE, ,ordered=TRUE, text.size=4, panel.arrange='h', digits=3, wrap=30, colors=c('cornsilk2','darkseagreen3','gray97'))
 data_systems+ theme(legend.text=element_text(size=12),
                     legend.direction="vertical",
                     axis.text = element_text(size=14))
@@ -272,3 +274,17 @@ data_challenges +theme(legend.text=element_text(size=12),
 #satisfaction <- plot(likertObj_44, ordered=TRUE,wrap=20, test.size=3.5)
 #satisfaction + theme(legend.text=element_text(size=10),
 #                   axis.text = element_text(size=10))
+
+ymin=0
+text.size=3
+ggplot(reshape, aes(y=value, x=Item, group=Item)) + 
+  geom_bar(stat='identity', aes(fill=variable)) + 
+  ylim(c(-5,105)) + 
+  coord_flip() +
+  scale_fill_manual('Response', values=brewer.pal(5, "BrBG"), 
+                    breaks=levels(reshape$variable), 
+                    labels=levels(reshape$variable)) +
+  ylab('Percentage') +
+  xlab('') +
+  theme_light() #+ theme(legend.position='top')
+

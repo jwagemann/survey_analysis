@@ -16,17 +16,13 @@ df_422 <- as.data.frame(df_new[,'X4.2.2'])
 
 df_421_split <- separate_rows(df_421,software, sep=';')
 df_421_freq <- count(df_421_split)
-df_421_freq$perc <- df_421_freq$freq / no_of_respondents * 100
+df_421_freq$perc <- df_421_freq$freq / 134 * 100
 
 df_421_freq <- df_421_freq[c(-9),]
-#df_421_freq$software <- as.factor(df_421_freq$software)
 
 df_421_order <- df_421_freq %>%
   arrange(perc) %>% 
   mutate(software = factor(software, unique(software)))
-
-colourCount = length(unique(data_use_sums$perc))
-getPalette = colorRampPalette(brewer.pal(11, "Spectral"))
 
 ggplot(df_421_order, aes(y=perc, x=software,fill=software, ymin=0)) + 
   geom_bar(stat="identity",width=0.6) +
@@ -34,11 +30,12 @@ ggplot(df_421_order, aes(y=perc, x=software,fill=software, ymin=0)) +
   scale_fill_brewer(palette="Spectral",direction=-1) +
   ylim(0,80) +
   coord_flip()+
+  theme_light() + 
   theme(legend.position="none",
         axis.text=element_text(size=12),
         legend.text = element_text(size=12),
         strip.text.x=element_text(size=12),
         axis.title = element_text(size=14),
         aspect.ratio=2/1) +
-  theme_light() + 
+
   scale_x_discrete(labels = function(x) str_wrap(x, width = 10))

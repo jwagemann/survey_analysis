@@ -3,25 +3,30 @@ setwd('/Users/julia_wagemann/Documents/github//survey_analysis/')
 library(ggplot2)
 library(dplyr)
 library(scales)
-df_new <- read.csv('20190131_final_results_header_modified.csv', header=TRUE, na.string="")
 
-no_of_respondents <- 213
+df_new <- read.csv('./data/20190131_final_results_header_modified.csv', header=TRUE, na.string="")
 
-# Work sector
+no_of_respondents <- nrow(df_new)
+
+# Work sector - What sector do you work in?
 df_2 <- df_new[,'X2.1']
 
 # Differentiation public / private research institute
+# If you work in University, please specify if you work in a public or private research institute
 df_211 <- df_new[,'X2.1.1']
 
-# Responses for Other
+# Responses for Other - Other work sector
 df_213 <- df_new[,'X2.1.3']
 
-test <- df_new[,c('X2.2','X2.2.4','X2.2.2')]
-# Data user / Data provider
+# Data user / Data provider - Who do you most identify with?
 df_22 <- df_new[,c('X2.2','X2.2.4')]
+# Data user - Please specify
 df_221 <- df_new[,'X2.2.1']
+# Data provider - Please specify
 df_222 <- df_new[,'X2.2.2']
+# Data user - Other
 df_223 <- df_new[,'X2.2.3']
+# Data provider - Other
 df_224 <- df_new[,'X2.2.4']
 
 df_22$X2.2 <- ifelse(df_22$X2.2=="Other" & (grepl("Both",df_22$X2.2.4) | grepl("user and",df_22$X2.2.4) | grepl(";",df_22$X2.2.4) | grepl("user/",df_22$X2.2.4)),"Data user;Data provider",as.character(df_22$X2.2))
@@ -34,7 +39,7 @@ df_2_summary$per <- df_2_summary$Freq / no_of_respondents * 100
 
 # Summarize research institute responses and add percents
 df_211_summary <- as.data.frame(table(df_211))
-df_211_summary$per <- df_211_summary$Freq / 92 * 100
+df_211_summary$per <- df_211_summary$Freq / df_2_summary[7,'Freq'] * 100
 
 # Sort work sectors based on percent values
 df_2_summary <- df_2_summary %>%
@@ -64,14 +69,7 @@ df_222_summary <- df_222_summary %>%
   arrange(per) %>%               # sort your dataframe
   mutate(df_222 = factor(df_222, unique(df_222)))
 
-dfdf_223_summary <- as.data.frame(table(df_223))
-df_221_summary$per <- df_221_summary$Freq / no_of_respondents * 100
-
-df_224_summary <- as.data.frame(table(df_224))
-
-#df_22_summary$per <- df_22_summary$Freq 
-
-
+df_223_summary <- as.data.frame(table(df_223))
 
 # Define ggplot blank theme for pie chart
 blank_theme <- theme_minimal()+
