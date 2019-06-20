@@ -28,44 +28,49 @@ E[is.na(E$E1),1] <- "I am not interested in this kind of service"
 F[is.na(F$F1),1] <- "I am not interested in this kind of service" 
 G[is.na(G$G1),1] <- "I am not interested in this kind of service" 
 
-test <- ifelse(G$G2 == 'I am not interested in this kind of service',NA,G$G2)
 
 
 A$A2 <- ifelse(A$A1=="I would like to use or continue to use this kind of service in the future", A$A1, A$A2)
-A$A1.1 <- ifelse(A$A1 & A$A2)
 A$A3 <- ifelse(A$A1=="I am not interested in this kind of service", A$A1, A$A3)
 A$A1<- ifelse(A$A1=="I would like to use or continue to use this kind of service in the future", NA, A$A1)
 A$A1 <- ifelse(A$A1=="I am not interested in this kind of service", NA, A$A1)
+A$A2 <- ifelse(!is.na(A$A1) & !is.na(A$A2), NA, A$A2)
 
 B$B2 <- ifelse(B$B1=="I would like to use or continue to use this kind of service in the future", B$B1, B$B2)
 B$B3 <- ifelse(B$B1=="I am not interested in this kind of service", B$B1, B$B3)
 B$B1 <- ifelse(B$B1=="I would like to use or continue to use this kind of service in the future", NA, B$B1)
 B$B1 <- ifelse(B$B1=="I am not interested in this kind of service", NA, B$B1)
+B$B2 <- ifelse(!is.na(B$B1) & !is.na(B$B2), NA, B$B2)
 
 C$C2 <- ifelse(C$C1=="I would like to use or continue to use this kind of service in the future", C$C1, C$C2)
 C$C3 <- ifelse(C$C1=="I am not interested in this kind of service", C$C1, C$C3)
 C$C1 <- ifelse(C$C1=="I would like to use or continue to use this kind of service in the future", NA, C$C1)
 C$C1 <- ifelse(C$C1=="I am not interested in this kind of service", NA, C$C1)
+C$C2 <- ifelse(!is.na(C$C1) & !is.na(C$C2), NA, C$C2)
 
 D$D2 <- ifelse(D$D1=="I would like to use or continue to use this kind of service in the future", D$D1, D$D2)
 D$D3 <- ifelse(D$D1=="I am not interested in this kind of service", D$D1, D$D3)
 D$D1 <- ifelse(D$D1=="I would like to use or continue to use this kind of service in the future", NA, D$D1)
 D$D1 <- ifelse(D$D1=="I am not interested in this kind of service", NA, D$D1)
+D$D2 <- ifelse(!is.na(D$D1) & !is.na(D$D2), NA, D$D2)
 
 E$E2 <- ifelse(E$E1=="I would like to use or continue to use this kind of service in the future", E$E1, E$E2)
 E$E3 <- ifelse(E$E1=="I am not interested in this kind of service", E$E1, E$E3)
 E$E1 <- ifelse(E$E1=="I would like to use or continue to use this kind of service in the future", NA, E$E1)
 E$E1 <- ifelse(E$E1=="I am not interested in this kind of service", NA, E$E1)
+E$E2 <- ifelse(!is.na(E$E1) & !is.na(E$E2), NA, E$E2)
 
 F$F2 <- ifelse(F$F1=="I would like to use or continue to use this kind of service in the future", F$F1, F$F2)
 F$F3 <- ifelse(F$F1=="I am not interested in this kind of service", F$F1, F$F3)
 F$F1 <- ifelse(F$F1=="I would like to use or continue to use this kind of service in the future", NA, F$F1)
 F$F1 <- ifelse(F$F1=="I am not interested in this kind of service", NA, F$F1)
+F$F2 <- ifelse(!is.na(F$F1) & !is.na(F$F2), NA, F$F2)
 
 G$G2 <- ifelse(G$G1=="I would like to use or continue to use this kind of service in the future", G$G1, G$G2)
 G$G3 <- ifelse(G$G1=="I am not interested in this kind of service", G$G1, G$G3)
 G$G1 <- ifelse(G$G1=="I would like to use or continue to use this kind of service in the future", NA, G$G1)
 G$G1 <- ifelse(G$G1=="I am not interested in this kind of service", NA, G$G1)
+G$G2 <- ifelse(!is.na(G$G1) & !is.na(G$G2), NA, G$G2)
 
 # Bring all split columns together into one data frame
 dataSystems_freq <- cbind(A,B,C,D,E,F,G)
@@ -95,3 +100,11 @@ dataSystems <- c('Download service', 'Cloud-computing infrastructure', 'OGC web 
 
 dataAccess <- data.frame(dataSystems, ds_current, ds_futureUse, ds_no_interest)
 dataAccess_rel <- data.frame(dataSystems, ds_current_rel, ds_futureUse_rel, ds_no_interest_rel)
+
+dataAccess_order <- dataAccess %>%
+  arrange(-ds_current) %>% 
+  mutate(dataSystems = factor(dataSystems, unique(dataSystems)))
+
+dataAccess_rel_order <- dataAccess_rel %>%
+  arrange(-ds_current_rel) %>% 
+  mutate(dataSystems = factor(dataSystems, unique(dataSystems)))

@@ -55,18 +55,25 @@ dummies_ag <- dummies_ag[,-6]
 
 colNames_vector_ws <- c('Non profit','University','Intergovernmental organisation','Government', 'Established company', 'Start-up')
 colNames_vector_du <- c('Climate reanalysis','Daily meteorological data', 'Seasonal forecast data', 'Environmental forecast data', 'Earth Observations','Other Geospatial data','Value-added products')
-colNames_vector_du <- c('Software Developer', 'Researcher', 'Project manager', 'Data Analyst', 'Team leader', 'Data Scientist', 'Student')
+colNames_vector_dut <- c('Software Developer', 'Researcher', 'Project manager', 'Data Analyst', 'Team leader', 'Data Scientist', 'Student')
 colNames_vector_ag <- c('30-40 years', '20-30 years', '50-60 years', '40-50 years', '>60 years', '<20 years')
 
 crosstab_ws_pl <- getCrossTabMelt(dummies_ws,dummies_pl, colNames_vector_ws)
 crosstab_du_pl <- getCrossTabMelt(dataUse_freq, dummies_pl,colNames_vector_du)
-crosstab_dut_pl <- getCrossTabMelt(dummies_du, dummies_pl, colNames_vector_du)
+crosstab_dut_pl <- getCrossTabMelt(dummies_du, dummies_pl, colNames_vector_dut)
 crosstab_ag_pl <- getCrossTabMelt(dummies_ag, dummies_pl, colNames_vector_ag)
 
-facet_plot <- ggplot(data=crosstab_ag_pl, aes(x=variable, y=value)) +
+df_41_freq <- df_41_freq[c(-8,-9,-14),]
+df_41_order <- df_41_freq %>%
+  arrange(-perc) %>% 
+  mutate(programming.language = factor(programming.language, unique(programming.language)))
+
+facet_plot <- ggplot(data=crosstab_du_pl, aes(x=variable, y=value)) +
   geom_bar(stat='identity', aes(fill=variable), width=0.7) +
   scale_fill_brewer(palette='Spectral') +
   facet_wrap(~ cat, ncol=2, labeller=labeller(data=label_wrap_gen(45))) +
-  labs(x='Rating from 1 (not true) to 5 (very true)', y='Percent') +
+  labs(x='', y='n') +
   theme_light() +
-  theme(legend.position = 'none', strip.text.x= element_text(size=12))
+  theme(legend.position = 'none', 
+        strip.text.x= element_text(size=12),
+        axis.text=element_text(size=12))

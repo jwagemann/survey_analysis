@@ -6,13 +6,7 @@ library('gtable')
 library('grid')
 library('ggsci')
 
-wd <- setwd('/Users/julia_wagemann/Documents/github/survey_analysis/')
 source('31_data_use_prepare.R') # load dataUse_freq for the data frame that prepares the data use responses
-
-
-
-surveyData <- read.csv('./data/20190131_final_results.csv', header = TRUE, na.strings="")
-no_of_respondents <- nrow(surveyData)
 
 dataUse_other <- surveyData[,22]
 
@@ -38,7 +32,9 @@ df_current <- data.frame(dataType_2,currentUse,currentUse_perc)
 df_future <- data.frame(dataType_2, futureUse,futureUse_perc)
 
 df_current_sort <- df_current[order(-df_current$currentUse),]
-df_future_sort <- df_future[order(-df_future$futureUse),]
+df_future_sort <- df_future[order(df_current$currentUse),]
+
+df_future_sort$dataType_2 <-factor(df_future_sort$dataType_2, levels(df_future_sort$dataType_2)[c(5,6,7,1,2,4,3)])
 
 
 df_current_sort['use'] <- 'current'
@@ -49,38 +45,39 @@ colnames(df_current_sort) <- c('dataType_2', 'abs', 'rel', 'use')
 # Grouped
 plot_current <- ggplot(df_current_sort, aes(fill=dataType_2, y=abs, x=reorder(dataType_2, abs))) +
   geom_bar(stat='identity', width=0.6) +
-  coord_flip() +
-  labs(x="Use", y="Number of users", Colour="Data use") +
+#  coord_flip() +
+  labs(x="", y="Number of users", Colour="Data use") +
 #  scale_fill_brewer(palette='BrBG') +
   scale_fill_uchicago(palette='dark') +
   scale_y_reverse()+
-  scale_x_discrete(labels=wrap_format(15), position='right')+
-  ggtitle('Current') + 
+  scale_x_discrete(labels=wrap_format(15)) + 
+#  ggtitle('Current') + 
   theme_light()+
   theme(legend.position='none',
         plot.title=element_text(size=14),
-        axis.text=element_text(size=12),
-        axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5),
-        axis.title.y = element_blank())
+        axis.text.x=element_text(size=12),
+#        axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5),
+        axis.text.y=element_text(size=12))
+#        axis.title.y = element_blank())
 
 positions <- c('Seasonal forecasts','Environmental forecasts', 'Meteorological forecasts','Climate reanalysis','Value-added products','Other Geospatial Data', 'Earth Observations')
 plot_future <- ggplot(df_future_sort, aes(fill=dataType_2, y=abs, x=dataType_2)) +
   geom_bar(stat='identity', width=0.6) +
-  coord_flip() +
-  labs(x="Use", y="Number of users", Colour="Data use") +
-  scale_x_discrete(labels=wrap_format(15), limits=positions) +
-  ggtitle('Future')+
+#  coord_flip() +
+  labs(x="", y="Number of users", Colour="Data use") +
+  scale_x_discrete(labels=wrap_format(15), limits=positions, position='top') +
+  #ggtitle('Future')+
   ylim(0,150)+
   scale_fill_uchicago(palette='light') +
   theme_light() + 
   theme(legend.position='none',
         plot.title=element_text(size=14),
         axis.text.x=element_text(size=12),
-        axis.text.y=element_blank(),
-        axis.title.y = element_blank())
+        axis.text.y=element_text(size=12))
+#        axis.title.y = element_blank())
 
 
-grid.draw(cbind(ggplotGrob(plot_current), ggplotGrob(plot_future), size='first'))
+grid.draw(rbind(ggplotGrob(plot_future), ggplotGrob(plot_current), size='first'))
 
 
   

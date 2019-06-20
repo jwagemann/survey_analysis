@@ -1,20 +1,10 @@
 source('31_data_use_prepare.R') # Load dataUse_freq
 source('data_survey_functions.R') # Load dataUse_freq
 source('dummies_prepare.R')
-library('stringr')
-library(ggplot2)
-library(RColorBrewer)
-
-wd <- setwd('/Users/julia_wagemann/Documents/github/survey_analysis/')
-
-df_new <- read.csv('./data/20190131_final_results_header_modified.csv', header=TRUE, na.string="")
-
-no_of_respondents <- nrow(df_new)
 
 dataUse_freq <- dataUse_freq[,c('A1', 'B1','C1','D1','E1','F1','G1')]
 
 #Load desktop software
-
 df_421 <- as.data.frame(df_new[,'X4.2.1'])
 colnames(df_421) <- 'software'
 df_421_split <- separate_rows(df_421,software, sep=';')

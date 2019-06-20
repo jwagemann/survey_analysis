@@ -1,9 +1,11 @@
+# Creates a dummy table of 0 and 1s
 getDummies <- function(df,colNo){
   df_cols <- unique(unlist(strsplit(as.character(df[,colNo]), ";", fixed = TRUE)))
   dummies <- sapply(df_cols, function(co)grepl(co,df[,colNo], fixed=TRUE))
   return(dummies)
 }
 
+# Creates the crosstable of two data frames
 getCrossTabMelt <- function(df_1, df_2, colNamesVec){
   ncol_1 <- ncol(df_1)
   df_crosstab <- data.frame(df_1,df_2)
@@ -31,4 +33,12 @@ getCrossTabMelt <- function(df_1, df_2, colNamesVec){
   crosstab_final$cat <- rownames(crosstab_final)
   crosstab_final_melt <- melt(crosstab_final,id='cat')
   return(crosstab_final_melt)
+}
+
+# Splits all the entries of one column into multiple rows and return the summary table of the columns entries
+splitInRows <- function(df_subset, col, noOfRespondents){
+  df_split <- separate_rows(df_subset,col, sep=';')
+  df_freq <- count(df_split)
+  df_freq$perc <- df_freq$freq / noOfRespondents * 100
+  return(df_freq)
 }
