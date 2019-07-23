@@ -1,7 +1,7 @@
 library(tidyr)
 wd <- setwd('/Users/julia_wagemann/Documents/github/survey_analysis/')
 
-surveyData <- read.csv('./data/20190131_final_results.csv', header = TRUE, na.strings="")
+surveyData <- read.csv('./data/20190611_final_results_header_modified.csv', header = TRUE, na.strings="")
 no_of_respondents <- nrow(surveyData)
 dataUse <- surveyData[,14:21]
 dataUse_other <- surveyData[,22]
@@ -50,4 +50,4 @@ dataUse_freq$F1 <- ifelse(dataUse_freq$F1=="Dataset I would like to use in the f
 dataUse_freq$G2 <- ifelse(dataUse_freq$G1=="Dataset I would like to use in the future", dataUse_freq$G1, dataUse_freq$G2)
 dataUse_freq$G1 <- ifelse(dataUse_freq$G1=="Dataset I would like to use in the future", NA, dataUse_freq$G1)
 
-#Return data frame with responses distinguished
+

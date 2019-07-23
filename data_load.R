@@ -1,11 +1,16 @@
 source('data_survey_functions.R') # Load dataUse_freq
 library('data.table')
+library('likert')
+library('dplyr')
+library('tidyr')
+library('plyr')
+
 
 # Set working directory
 wd <- setwd('/Users/julia_wagemann/Documents/github/survey_analysis/')
 
 # Load data set
-df_new <- read.csv('./data/20190131_final_results_header_modified.csv', header=TRUE, na.string="")
+df_new <- read.csv('./data/20190611_final_results_header_modified.csv', header=TRUE, na.string="")
 
 # Number of respondents 
 no_of_respondents <- nrow(df_new)
@@ -17,7 +22,7 @@ no_of_respondents <- nrow(df_new)
 #Load country of residence
 df_11 <- as.data.frame(df_new['X1.1'])
 colnames(df_11) <- c('cor')
-df_11_freq <- as.data.frame(count(df_11))
+df_11_freq <- as.data.frame(plyr::count(df_11,'cor'))
 df_11_freq <- df_11_freq[-38,]
 
 # Filter all countries with more than 10 responses
@@ -37,7 +42,7 @@ df_11_freq_ord <- df_11_freq %>%
 df_14 <- as.data.frame(df_new[,'X1.4'])
 colnames(df_14) <- c('age_group')
 
-df_14_freq <- count(na.omit(df_14))
+df_14_freq <- plyr::count(na.omit(df_14))
 colnames(df_14_freq) <- c('age.group','freq')
 levels_14 = c('< 20 years', '20 - 30 years', '30 - 40 years', as.character(df_14_freq[5,1]), '50 - 60 years', '> 60 years')
 df_14_freq$age.group <- factor(df_14_freq$age.group, levels=levels_14)
@@ -49,7 +54,7 @@ df_14_freq$age.group <- factor(df_14_freq$age.group, levels=levels_14)
 #####################################################################
 
 # Work sector - What sector do you work in?
-df_2 <- df_new[,'X2.1']
+df_21 <- as.data.frame(df_new[,'X2.1'])
 
 # Differentiation public / private research institute
 # If you work in University, please specify if you work in a public or private research institute
@@ -61,7 +66,7 @@ df_213 <- df_new[,'X2.1.3']
 # Data user / Data provider - Who do you most identify with?
 df_22 <- df_new[,c('X2.2','X2.2.4')]
 df_22_1 <- df_new[,c('X2.2')]
-df_22_freq <- count(df_22_1)
+df_22_freq <- plyr::count(df_22_1)
 no_data_providers <- df_22_freq[1,2]
 no_data_users <- df_22_freq[2,2]
 # Data user - Please specify
@@ -144,7 +149,7 @@ df_33 <- as.data.frame(df_new[,'X3.3'])
 
 df_33_other <- df_new[,'X3.3.1']
 
-df_33_sum <- count(df_33)
+df_33_sum <- plyr::count(df_33)
 colnames(df_33_sum) <- c('application.area', 'freq')
 df_33_sum$per <- df_33_sum$freq / no_of_respondents
 
@@ -184,7 +189,7 @@ likertObj_35 <- likert(df_likert_35_res)
 df_36 <- df_new[,'X3.6']
 df_36_reason <- df_new[,'X3.6.1']
 
-df_36_freq <- count(df_36)
+df_36_freq <- plyr::count(df_36)
 df_36_freq$perc <- df_36_freq$freq/ no_of_respondents * 100
 
 # Sort reasons based on freq values
@@ -205,11 +210,11 @@ df_37_split <- separate(df_37_split,X3.7.Consumption.open.data, sep='/',into='X3
 df_37_split <- separate(df_37_split,X3.7.Sharing.results, sep='/',into='X3.7.Sharing.results')
 df_37_split <- separate(df_37_split,X3.7.Importantance.task.parallelisation, sep='/',into='X3.7.Importance.task.parallelisation')
 
-df_37_freq <- count(df_37_split$X3.7.Combination.data.sources)
-df_37_freq$production_value.added.products <- count(df_37_split$X3.7.Production.value.added.products)[-6,2]
-df_37_freq$consumption.open.data <- count(df_37_split$X3.7.Consumption.open.data)[-6,2]
-df_37_freq$sharing.results <- count(df_37_split$X3.7.Sharing.results)[-6,2]
-df_37_freq$importance.task.parallelistation <- count(df_37_split$X3.7.Importance.task.parallelisation)[-6,2]
+df_37_freq <- plyr::count(df_37_split$X3.7.Combination.data.sources)
+df_37_freq$production_value.added.products <- plyr::count(df_37_split$X3.7.Production.value.added.products)[-6,2]
+df_37_freq$consumption.open.data <- plyr::count(df_37_split$X3.7.Consumption.open.data)[-6,2]
+df_37_freq$sharing.results <- plyr::count(df_37_split$X3.7.Sharing.results)[-6,2]
+df_37_freq$importance.task.parallelistation <- plyr::count(df_37_split$X3.7.Importance.task.parallelisation)[-6,2]
 
 df_37_relfreq <- df_37_freq[,c(2:6)] / no_of_respondents * 100
 df_37_relfreq$cat <- df_37_freq$x
@@ -217,7 +222,7 @@ df_37_relfreq$cat <- df_37_freq$x
 # Example of a data processing chain
 df_38 <- df_new[, c('X3.8')]
 
-count(df_38)
+plyr::count(df_38)
 nrow(na.omit(df_38))     
 
 
@@ -240,7 +245,7 @@ df_41_order <- df_41_freq %>%
 #Load desktop software - Yes / No
 df_42 <- as.data.frame(df_new[,'X4.2'])
 colnames(df_42) <- c('yes.no')
-df_42_freq <- count(df_42)
+df_42_freq <- plyr::count(df_42)
 df_42_freq$perc <- df_42_freq$freq / no_of_respondents * 100
 df_42_freq <- df_42_freq[-3,]
 
@@ -273,9 +278,9 @@ df_45 <- df_new[,c('X4.5.cloud.code.editor', 'X4.5.code.routines.access.cloud.se
 df_451 <- df_new[,c('X4.5.1')]
 
 
-df_45_freqs <- count(df_45$X4.5.cloud.code.editor)  %>% left_join(count(df_45$X4.5.code.routines.access.cloud.services),by='x') %>%
-  left_join(count(df_45$X4.5.code.routines.python.r),by='x') %>%
-  left_join(count(df_45$X4.5.geospatial.software) ,by='x')
+df_45_freqs <- plyr::count(df_45$X4.5.cloud.code.editor)  %>% left_join(plyr::count(df_45$X4.5.code.routines.access.cloud.services),by='x') %>%
+  left_join(plyr::count(df_45$X4.5.code.routines.python.r),by='x') %>%
+  left_join(plyr::count(df_45$X4.5.geospatial.software) ,by='x')
 
 colnames(df_45_freqs) <- c('Frequency','cloud.code.editor', 'code.routines.access.cloud.services', 'code.routines.python.r', 'geospatial.software')
 
@@ -318,7 +323,7 @@ levels_61 <- c('Not at all interested', 'Not interested', 'Neither not intereste
 
 df_61 <- as.data.frame(df_61[complete.cases(df_61)])
 nrow_61 <- nrow(df_61)
-df_61_count <- as.data.frame(count(df_61))
+df_61_count <- as.data.frame(plyr::count(df_61))
 colnames(df_61_count) <- c('Interest', 'freq')
 
 df_61_perc <- df_61_count$freq / nrow_61 * 100
@@ -340,7 +345,7 @@ df_611 <- df_new[,c('X6.1.1')]
 df_62 <- df_new[,'X6.2']
 df_62 <- as.data.frame(df_62[complete.cases(df_62)])
 nrow_62 <- nrow(df_62)
-df_62_freq <- count(df_62)
+df_62_freq <- plyr::count(df_62)
 df_62_perc <- df_62_freq$freq / nrow_62 * 100
 df_62_perc <- cbind.data.frame(df_62_freq[,1], df_62_perc)
 colnames(df_62_perc) <- c('policy', 'freq')
@@ -410,14 +415,14 @@ df_66 <- df_new[,'X6.6']
 # 6.7 Would you be ablet to estimate the technical requirements you would need for your data storage and/or processing tasks in the cloud?
 
 df_67 <- df_new[,'X6.7']
-df_67_freq <- count(df_67)
+df_67_freq <- plyr::count(df_67)
 
 df_671 <- df_new['X6.7.1']
 
 # 6.8 Would you be willing to pay for processing services
 
 df_68 <- df_new[,'X6.8']
-df_68_freq <- count(df_68)
+df_68_freq <- plyr::count(df_68)
 df_681 <- as.data.frame(df_new[,'X6.8.1'])
 nrow_681 <- nrow(na.omit(df_681))
 

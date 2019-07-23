@@ -1,8 +1,32 @@
+library('tidyr')
+library
+library('plyr')
+
 # Creates a dummy table of 0 and 1s
 getDummies <- function(df,colNo){
   df_cols <- unique(unlist(strsplit(as.character(df[,colNo]), ";", fixed = TRUE)))
   dummies <- sapply(df_cols, function(co)grepl(co,df[,colNo], fixed=TRUE))
   return(dummies)
+}
+
+# Create crosstable 
+createCrossTab <- function(df_1,df_2,rowNamesVec){
+  tmp <- data.frame(df_1,df_2)
+  print(length(tmp))
+  
+  tmp2 <- colSums(df_2)
+  print(tmp2)
+  count1 <- length(df_1)
+  print(count1)
+  for(i in 1:count1){
+    print(i)
+    df_subset <- subset(tmp[,c(i,(count1+1):length(tmp))], (!is.na(tmp[,i])))
+    tmp2 <- rbind(tmp2,colSums(df_subset[,2:length(df_subset)]))
+    print(tmp2)
+  }
+  print(tmp2)
+  rownames(tmp2) <- rowNamesVec
+  return(tmp2)
 }
 
 # Creates the crosstable of two data frames
@@ -38,7 +62,7 @@ getCrossTabMelt <- function(df_1, df_2, colNamesVec){
 # Splits all the entries of one column into multiple rows and return the summary table of the columns entries
 splitInRows <- function(df_subset, col, noOfRespondents){
   df_split <- separate_rows(df_subset,col, sep=';')
-  df_freq <- count(df_split)
+  df_freq <- plyr::count(df_split)
   df_freq$perc <- df_freq$freq / noOfRespondents * 100
   return(df_freq)
 }
