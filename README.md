@@ -14,8 +14,13 @@ The questionnaire and an anonymised version of the survey responses are availabl
 Publication of the results is under preparation.
 
 ## Repository structure
+The repository is structured based on the order of the survey questions. There are two base modules, who load the data, required libraries and define some functions:
+- [data_load.R](./data_load.R)
+- [data_survey_functions.R](./data_survey_functions.R)
+
+Both scripts have to be loaded before the other scripts can be run. The other scripts have the code to analyse and visualise the respecitve question of the survey questionnaire.
 
 
 
-
-<hr>
+## License
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.
