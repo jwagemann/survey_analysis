@@ -1,10 +1,7 @@
-library(tidyr)
-wd <- setwd('/Users/julia_wagemann/Documents/github/survey_analysis/')
 
-surveyData <- read.csv('./data/20190611_final_results_header_modified.csv', header = TRUE, na.strings="")
-no_of_respondents <- nrow(surveyData)
-dataUse <- surveyData[,14:21]
-dataUse_other <- surveyData[,22]
+no_of_respondents <- nrow(df_new)
+dataUse <- df_new[,14:21]
+dataUse_other <- df_new[,22]
 
 # Split columns and seperate columns with multiple responses
 A = tidyr::separate(dataUse,col=1,sep="[;]", into=c("A1","A2"), remove=TRUE)

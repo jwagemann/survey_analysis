@@ -1,9 +1,4 @@
-library(tidyr)
-wd <- setwd('/Users/julia_wagemann/Documents/github/survey_analysis/')
-
-surveyData <- read.csv('./data/20190131_final_results.csv', header = TRUE, na.strings="")
-no_of_respondents <- nrow(surveyData)
-
+# Load responses to question which data access systems users are currently using
 df_43 <- df_new[,c('X4.3.Download.service', 'X4.3.cloud.computing.infrastructure','X4.3.ogc.service','X4.3.custom.api.opendap', 'X4.3.virtual.research.infrastructure','X4.3.data.cube.technology','X4.3.spatial.array.database')]
 df_43 <- df_43[-67,] # Remove entry with strange responses
 
@@ -11,7 +6,6 @@ colnames(df_43) <- c('Download.service', 'Cloud.computing.infrastructure','OGC.w
 
 
 # Split columns and seperate columns with multiple responses
-
 A = tidyr::separate(as.data.frame(df_43[,1]),col=1,sep="[;]", into=c("A1","A2","A3"), remove=TRUE)
 B = tidyr::separate(as.data.frame(df_43[,2]),col=1,sep="[;]", into=c("B1","B2","B3"), remove=TRUE)
 C = tidyr::separate(as.data.frame(df_43[,3]),col=1,sep="[;]", into=c("C1","C2","C3"), remove=TRUE)
@@ -108,3 +102,4 @@ dataAccess_order <- dataAccess %>%
 dataAccess_rel_order <- dataAccess_rel %>%
   arrange(-ds_current_rel) %>% 
   mutate(dataSystems = factor(dataSystems, unique(dataSystems)))
+

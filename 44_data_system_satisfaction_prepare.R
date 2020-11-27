@@ -1,4 +1,3 @@
-source('./dummies_prepare.R')
 
 # How satisfied are you with the current data access service you use?
 df_44 <- as.data.frame(df_new[, c('X4.4.download.service',
@@ -21,13 +20,13 @@ f <- cbind.data.frame(dataSystems_freq$F1,df_44[,6])
 g <- cbind.data.frame(dataSystems_freq$G1,df_44[,7])
 
 # Filter all entries who are currently used and satisfaction is not NA or "Not applicable"
-a_filter <- count(a[!is.na(a[,1]) & !a[,2]=='Not applicable' & !is.na(a[,2]),])
-b_filter <- count(b[!is.na(b[,1]) & !b[,2]=='Not applicable' & !is.na(b[,2]),])
-c_filter <- count(c[!is.na(c[,1]) & !c[,2]=='Not applicable' & !is.na(c[,2]),])
-d_filter <- count(d[!is.na(d[,1]) & !d[,2]=='Not applicable' & !is.na(d[,2]),])
-e_filter <- count(e[!is.na(e[,1]) & !e[,2]=='Not applicable' & !is.na(e[,2]),])
-f_filter <- count(f[!is.na(f[,1]) & !f[,2]=='Not applicable' & !is.na(f[,2]),])
-g_filter <- count(g[!is.na(g[,1]) & !g[,2]=='Not applicable' & !is.na(g[,2]),])
+a_filter <- plyr::count(a[!is.na(a[,1]) & !a[,2]=='Not applicable' & !is.na(a[,2]),])
+b_filter <- plyr::count(b[!is.na(b[,1]) & !b[,2]=='Not applicable' & !is.na(b[,2]),])
+c_filter <- plyr::count(c[!is.na(c[,1]) & !c[,2]=='Not applicable' & !is.na(c[,2]),])
+d_filter <- plyr::count(d[!is.na(d[,1]) & !d[,2]=='Not applicable' & !is.na(d[,2]),])
+e_filter <- plyr::count(e[!is.na(e[,1]) & !e[,2]=='Not applicable' & !is.na(e[,2]),])
+f_filter <- plyr::count(f[!is.na(f[,1]) & !f[,2]=='Not applicable' & !is.na(f[,2]),])
+g_filter <- plyr::count(g[!is.na(g[,1]) & !g[,2]=='Not applicable' & !is.na(g[,2]),])
 
 # Get number of rows for filtered data frames, in order to calculate percentages
 a_nrow <- nrow(a[!is.na(a[,1]) & !a[,2]=='Not applicable' & !is.na(a[,2]),])
@@ -65,7 +64,7 @@ df_44_merged_abs <- a_filter[,c(2,3)] %>% left_join(b_filter[,c(2,3)], by='satis
   left_join(g_filter[,c(2,3)], by='satisfaction')
 
 # Set colnames
-colnames(df_44_merged_abs) <- c('satisfaction','download.service','cloud.computing', 'ogc.service', 'custom.api', 'virtual.research.infrastructure', 'data.cube.technology','array.database')
+colnames(df_44_merged_abs) <- c('Satisfaction','Download Service','Cloud computing', 'OGC web service', 'Custom API', 'Virtual research infrastructure', 'Data Cube Technology','Array Database')
 
 # Bring filtered data frame together - Relative frequencies
 df_44_merged_rel <- a_filter[,c(2,4)] %>% left_join(b_filter[,c(2,4)], by='satisfaction') %>% 
@@ -76,7 +75,7 @@ df_44_merged_rel <- a_filter[,c(2,4)] %>% left_join(b_filter[,c(2,4)], by='satis
   left_join(g_filter[,c(2,4)], by='satisfaction')
 
 # Set colnames
-colnames(df_44_merged_rel) <- c('satisfaction','download.service','cloud.computing', 'ogc.service', 'custom.api', 'virtual.research.infrastructure', 'data.cube.technology','array.database')
+colnames(df_44_merged_rel) <- c('Satisfaction','Download service','Cloud-computing infrastructure', 'OGC web service', 'Custom API / OpenDAP', 'Virtual research infrastructure', 'Data cube technology','Array / Spatial database')
 
 # Set NAs to zero responses
 df_44_merged_rel[is.na(df_44_merged_rel)] <- 0
@@ -85,60 +84,33 @@ df_44_merged_abs[is.na(df_44_merged_abs)] <- 0
 # Order of satisfaction levels
 levels_44 <- c('Very dissatisfied', 'Dissatisfied', 'Neither satisfied nor dissatisfied', 'Satisfied', 'Very satisfied')
 
-df_44_merged_rel$satisfaction <- factor(df_44_merged_rel$satisfaction,levels=levels_44)
-df_44_merged_abs$satisfaction <- factor(df_44_merged_abs$satisfaction,levels=levels_44)
+df_44_merged_rel$Satisfaction <- factor(df_44_merged_rel$Satisfaction,levels=levels_44)
+df_44_merged_abs$Satisfaction <- factor(df_44_merged_abs$Satisfaction,levels=levels_44)
 
 # Order data based on satisfaction levels
-df_44_merged_ord <- df_44_merged_rel[order(factor(df_44_merged_rel$satisfaction,levels=levels_44)),]
-df_44_merged_ord_abs <- df_44_merged_abs[order(factor(df_44_merged_abs$satisfaction,levels=levels_44)),]
+df_44_merged_ord <- df_44_merged_rel[order(factor(df_44_merged_rel$Satisfaction,levels=levels_44)),]
+df_44_merged_ord_abs <- df_44_merged_abs[order(factor(df_44_merged_abs$Satisfaction,levels=levels_44)),]
 
+# Extract entries for 'satisfied' and 'very satisfied' in percent
 df_44_satisfaction_subset <-df_44_merged_ord[c(4,5),]
 df_44_satisfaction_sum <- as.data.frame(colSums(df_44_satisfaction_subset[,-1]))
-
+df_44_satisfaction_sum$items <- rownames(df_44_satisfaction_sum)
 df_44_satisfaction_sum$data.systems <- rownames(df_44_satisfaction_sum)
+# Order the entries in an increasing order 
 df_44_satisfaction_ord <- df_44_satisfaction_sum[order(df_44_satisfaction_sum$`colSums(df_44_satisfaction_subset[, -1])`),]
 
-
+# Extract entries for 'satisfied' and 'very satisfied' in absolute numbers
 df_44_satisfaction_subset_abs <-df_44_merged_ord_abs[c(4,5),]
 df_44_satisfaction_sum_abs <- as.data.frame(colSums(df_44_satisfaction_subset_abs[,-1]))
-
 df_44_satisfaction_sum_abs$data.systems <- rownames(df_44_satisfaction_sum_abs)
+# Order the entries in an increasing order
 df_44_satisfaction_ord_abs <- df_44_satisfaction_sum_abs[order(df_44_satisfaction_sum_abs$`colSums(df_44_satisfaction_subset_abs[, -1])`),]
 
 
-
-# Melt data frame for stacked bar and reorder data.systems based on satisfaction levels
-df_44_merged_melt <- melt(df_44_merged_ord,id.vars='satisfaction')
+# Melt data frame for stacked bar and reorder data.systems based on satisfaction levels - Frequencies
+df_44_merged_melt <- reshape2::melt(df_44_merged_ord,id.vars='Satisfaction')
 df_44_merged_melt$variable <- factor(df_44_merged_melt$variable, levels=df_44_satisfaction_ord$data.systems)
 
-df_44_merged_abs_melt <- melt(df_44_merged_ord_abs, id.vars='satisfaction')
+# Melt data frame for stacked bar and reorder data.systems based on satisfaction levels - Absolute numbers
+df_44_merged_abs_melt <- reshape2::melt(df_44_merged_ord_abs[,1:4], id.vars='Satisfaction')
 df_44_merged_abs_melt$variable <- factor(df_44_merged_abs_melt$variable, levels=df_44_satisfaction_ord_abs$data.systems)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-names(df_likert_44_res) <- c(
-  X4.4.download.service = 'Download Service from respective data providers',
-  X4.4.cloud.computing.infrastructure = 'Cloud computing infrastructure',
-  X4.4.ogc.service = 'via an OGC web service, e.g. WMS or WCS',
-  X4.4.custom.api.opendap = 'via  a custom API or an OpeNDAP server from a respective data provider',
-  X4.4.virtual.research.infrastructure = 'via a Virtual Research Infrastructure',
-  X4.4.data.cube.technology = 'via a Data Cube technology',
-  X4.4.spatial.array.database = 'via a spatial or array database')
-
-

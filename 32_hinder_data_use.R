@@ -1,9 +1,7 @@
-source('./dummies_prepare.R')
+df_32_freq <- df_32_freq[c(-1,-2),]
 
-
-df_32_freq <- df_32_freq[c(-5,-8),]
-
-bp_32 <- ggplot(data=df_32_freq,aes(x=reorder(df_new....X3.2..,freq), y=freq, fill=df_new....X3.2..)) +
+# Barplot of reasons why to not use some data formats
+bp_32 <- ggplot(data=df_32_freq,aes(x=data.use.constraint, y=freq, fill=data.use.constraint)) +
   geom_bar(stat='identity', width=0.7) +
   coord_flip()+
   labs(x="Constraint", y="Number of users") +

@@ -1,13 +1,21 @@
+# Set working directory
+wd <- setwd('/Users/julia_wagemann/Documents/github/survey_analysis/')
+
+
 source('data_survey_functions.R') # Load dataUse_freq
 library('data.table')
 library('likert')
 library('dplyr')
 library('tidyr')
 library('plyr')
+library('scales')
+library('ggplot2')
+library('grid')
+library('gtable')
+library('ggsci')
+library('RColorBrewer')
 
 
-# Set working directory
-wd <- setwd('/Users/julia_wagemann/Documents/github/survey_analysis/')
 
 # Load data set
 df_new <- read.csv('./data/20190611_final_results_header_modified.csv', header=TRUE, na.string="")
@@ -33,28 +41,36 @@ is.na(df_11_filter_all) <- df_11_filter_all != c('Austria') & df_11_filter_all !
 
 df_11_filter_all$region <- ifelse(df_11_filter_all$cor == "United States of America" | df_11_filter_all$cor == 'Canada','United States of America & Canada', 'Europe')
 
+df_11_freq_filter <- df_11_filter %>%
+  arrange(freq) %>%               # sort your dataframe
+  mutate(cor = factor(cor, unique(cor)))
+
 # Sort work sectors based on percent values
 df_11_freq_ord <- df_11_freq %>%
   arrange(freq) %>%               # sort your dataframe
   mutate(cor = factor(cor, unique(cor)))
 
+df_11_freq_ord$perc <- df_11_freq_ord$freq / no_of_respondents
+
+
+
 # Load age groups
 df_14 <- as.data.frame(df_new[,'X1.4'])
 colnames(df_14) <- c('age_group')
 
-df_14_freq <- plyr::count(na.omit(df_14))
+df_14_freq <- plyr::count(df_14)
 colnames(df_14_freq) <- c('age.group','freq')
 levels_14 = c('< 20 years', '20 - 30 years', '30 - 40 years', as.character(df_14_freq[5,1]), '50 - 60 years', '> 60 years')
 df_14_freq$age.group <- factor(df_14_freq$age.group, levels=levels_14)
 
-
+df_14_freq$perc <- df_14_freq$freq / 228
 
 #####################################################################
 # 2 Information about work
 #####################################################################
 
 # Work sector - What sector do you work in?
-df_21 <- as.data.frame(df_new[,'X2.1'])
+df_21 <- df_new[,c('X2.1')]
 
 # Differentiation public / private research institute
 # If you work in University, please specify if you work in a public or private research institute
@@ -63,12 +79,31 @@ df_211 <- df_new[,'X2.1.1']
 # Responses for Other - Other work sector
 df_213 <- df_new[,'X2.1.3']
 
+# Count multiple work sectors into different listings
+df_21_stacked <- stack(setNames(strsplit(as.character(df_21),';'), df_21))
+df_21_summary <- as.data.frame(table(df_21_stacked$values))
+df_21_summary$per <- df_21_summary$Freq / no_of_respondents * 100
+
+# Summarize research institute responses and add percents
+df_211_summary <- as.data.frame(table(df_211))
+df_211_summary$per <- df_211_summary$Freq / df_21_summary[7,'Freq'] * 100
+
+# Sort work sectors based on percent values
+df_21_summary <- df_21_summary %>%
+   arrange(per) %>%               # sort your dataframe
+   mutate(Var1 = factor(Var1, unique(Var1)))
+
+
+
 # Data user / Data provider - Who do you most identify with?
 df_22 <- df_new[,c('X2.2','X2.2.4')]
 df_22_1 <- df_new[,c('X2.2')]
 df_22_freq <- plyr::count(df_22_1)
+
+
 no_data_providers <- df_22_freq[1,2]
 no_data_users <- df_22_freq[2,2]
+
 # Data user - Please specify
 df_221 <- as.data.frame(df_new[,'X2.2.1'])
 # Data provider - Please specify
@@ -85,28 +120,13 @@ df_221$data_user_type <- as.character(df_221$data_user_type)
 df_22$X2.2 <- ifelse(df_22$X2.2=="Other" & (grepl("Both",df_22$X2.2.4) | grepl("user and",df_22$X2.2.4) | grepl(";",df_22$X2.2.4) | grepl("user/",df_22$X2.2.4)),"Data user;Data provider",as.character(df_22$X2.2))
 df_22$X2.2 <- ifelse(df_22$X2.2=="Other" & grepl("Data user for",df_22$X2.2.4),"Data user",as.character(df_22$X2.2))
 
-# Count multiple work sectors into different listings
-df_2_stacked <- stack(setNames(strsplit(as.character(df_2),';'), df_2))
-df_2_summary <- as.data.frame(table(df_2_stacked$values))
-df_2_summary$per <- df_2_summary$Freq / no_of_respondents * 100
 
-# Summarize research institute responses and add percents
-df_211_summary <- as.data.frame(table(df_211))
-df_211_summary$per <- df_211_summary$Freq / df_2_summary[7,'Freq'] * 100
-
-# Sort work sectors based on percent values
-df_2_summary <- df_2_summary %>%
-  arrange(per) %>%               # sort your dataframe
-  mutate(Var1 = factor(Var1, unique(Var1)))
-
-df_211_summary <- df_211_summary %>%
-  arrange(per) %>%               # sort your dataframe
-  mutate(df_211 = factor(df_211, unique(df_211)))
 
 # Summarize data user / data provider 
 df_22_stacked <- stack(setNames(strsplit(as.character(df_22$X2.2),';'),df_22))
 df_22_summary <- as.data.frame(table(df_22_stacked$values))
 df_22_summary$per <- df_22_summary$Freq / no_of_respondents * 100
+
 
 # Summarize data user roles
 no_of_data_users <- df_22_summary[2,2]
@@ -143,6 +163,9 @@ df_32_other <- df_new[,'X3.2.1']
 
 df_32_freq <- splitInRows(df_32,1,no_of_respondents)
 
+df_32_freq <- df_32_freq %>%
+  arrange(freq) %>%             # sort your dataframe
+  mutate(data.use.constraint = factor(data.use.constraint, unique(data.use.constraint)))
 
 # Application area = What do you use the data for?
 df_33 <- as.data.frame(df_new[,'X3.3'])
@@ -211,19 +234,25 @@ df_37_split <- separate(df_37_split,X3.7.Sharing.results, sep='/',into='X3.7.Sha
 df_37_split <- separate(df_37_split,X3.7.Importantance.task.parallelisation, sep='/',into='X3.7.Importance.task.parallelisation')
 
 df_37_freq <- plyr::count(df_37_split$X3.7.Combination.data.sources)
+colnames(df_37_freq) <- c('rating', 'combination.data.sources')
 df_37_freq$production_value.added.products <- plyr::count(df_37_split$X3.7.Production.value.added.products)[-6,2]
 df_37_freq$consumption.open.data <- plyr::count(df_37_split$X3.7.Consumption.open.data)[-6,2]
 df_37_freq$sharing.results <- plyr::count(df_37_split$X3.7.Sharing.results)[-6,2]
 df_37_freq$importance.task.parallelistation <- plyr::count(df_37_split$X3.7.Importance.task.parallelisation)[-6,2]
 
-df_37_relfreq <- df_37_freq[,c(2:6)] / no_of_respondents * 100
-df_37_relfreq$cat <- df_37_freq$x
+rating <- c(1,2,3,4,5)
+df_37_mean_1 <- sum(df_37_freq[,2]*rating)/231
+df_37_mean_2 <- sum(df_37_freq[,3]*rating)/231
+df_37_mean_3 <- sum(df_37_freq[,4]*rating)/231
+df_37_mean_4 <- sum(df_37_freq[,5]*rating)/231
+df_37_mean_5 <- sum(df_37_freq[,6]*rating)/231
 
 # Example of a data processing chain
 df_38 <- df_new[, c('X3.8')]
 
-plyr::count(df_38)
-nrow(na.omit(df_38))     
+#plyr::count(df_38)
+#nrow(na.omit(df_38))     
+
 
 
 #####################################################################
@@ -282,26 +311,34 @@ df_45_freqs <- plyr::count(df_45$X4.5.cloud.code.editor)  %>% left_join(plyr::co
   left_join(plyr::count(df_45$X4.5.code.routines.python.r),by='x') %>%
   left_join(plyr::count(df_45$X4.5.geospatial.software) ,by='x')
 
-colnames(df_45_freqs) <- c('Frequency','cloud.code.editor', 'code.routines.access.cloud.services', 'code.routines.python.r', 'geospatial.software')
+#df_45_perc <- df_45_freqs %>% mutate(cloud.code.editor = cloud.code.editor / df_45_colsums[1,1] *100) %>%
+#  mutate(code.routines.access.cloud.services = code.routines.access.cloud.services / df_45_colsums[2,1] * 100) %>%
+#  mutate(code.routines.python.r = code.routines.python.r / df_45_colsums[3,1] * 100) %>%
+#  mutate(geospatial.software = geospatial.software / df_45_colsums[4,1] * 100)
 
-df_45_colsums <- as.data.frame(colSums(x=df_45_freqs[-4,-1]))
+colnames(df_45_freqs) <- c('Frequency','Code editor in the cloud', 'API accessing cloud-service','Code-based processing on a local machine', 'Geospatial software on a local machine')
 
-df_45_perc <- df_45_freqs %>% mutate(cloud.code.editor = cloud.code.editor / df_45_colsums[1,1] *100) %>%
-  mutate(code.routines.access.cloud.services = code.routines.access.cloud.services / df_45_colsums[2,1] * 100) %>%
-  mutate(code.routines.python.r = code.routines.python.r / df_45_colsums[3,1] * 100) %>%
-  mutate(geospatial.software = geospatial.software / df_45_colsums[4,1] * 100)
+# df_45_colsums <- as.data.frame(colSums(x=df_45_freqs[-4,-1]))
 
-tmp <- as.data.frame(df_45_perc[1,])
-levels_45_freqs <- colnames(df_45_perc[,-1])
-df_45_transpose <- transpose(tmp[,2:5])
-df_45_transpose$processing.type <- levels_45_freqs
-df_45_transpose_ord <- df_45_transpose[order(df_45_transpose$V1),]
 
 
 levels_45 <- c('Never', 'Sometimes', 'Always')
-df_45_melt <- melt(df_45_freqs[-4,],id.vars='Frequency')
-df_45_melt$variable <- factor(df_45_melt$variable, levels=df_45_transpose_ord$processing.type)
-df_45_freqs$Frequency <- factor(df_45_freqs$Frequency,levels=levels_45)
+df_45_levels_ord <- df_45_freqs[order(factor(df_45_freqs$Frequency,levels=levels_45)),]
+
+levels_45_freqs <- colnames(df_45_levels_ord[,-1])
+df_45_transpose <- transpose(df_45_levels_ord[1:3,-1])
+
+df_45_transpose$processing.type <- levels_45_freqs
+df_45_transpose_ord <- df_45_transpose[order(df_45_transpose$V3),]
+colnames(df_45_transpose_ord) <- c(levels_45, 'Processing type')
+rownames(df_45_transpose_ord) <- c(df_45_transpose_ord$`Processing type`)
+
+
+
+df_45_melt <- reshape2::melt(df_45_transpose_ord,id.vars='Processing type')
+df_45_melt$`Processing type` <- factor(df_45_melt$`Processing type`, levels=df_45_transpose_ord$`Processing type`)
+
+
 
 
 # 4.6. Rate how important the following tasks are for you?
@@ -338,6 +375,8 @@ df_61_perc <- df_61_perc %>%
   arrange(freq) %>% 
   mutate(Interest = factor(Interest, levels=levels_61))
 
+df_61_freq$perc <- df_61_perc$freq
+
 df_611 <- df_new[,c('X6.1.1')]
 
 # 6.2 Concerning the legal policy of the cloud service, what would you prefer?
@@ -367,6 +406,8 @@ df_62_freq_ord <- df_62_freq %>%
 df_62_perc_ord <- df_62_perc %>%
   arrange(freq) %>% 
   mutate(policy = factor(policy, levels=levels_62))
+
+df_62_freq_ord$perc <- df_62_perc_ord$freq
 
 # 6.3 Use of cloud services
 df_63 <- df_new[,'X6.3']
@@ -447,16 +488,19 @@ df_682 <- as.data.frame(df_new[,'X6.8.2'])
 df_682_freq <- splitInRows(df_682,1,nrow_681)
 colnames(df_682_freq) <- c('amount', 'freq','perc')
 
-levels_682 <- c('up to 100 Euro / 100 US Dollars', 
-                'up to 500 Euro / 500 US Dollars', 
-                'up to 1,000 Euros / 1,000 US Dollars',
-                'up to 10,000 Euros / 10,000 US Dollars',
-                'up to 50,000 Euros / 50,000 US Dollars',
-                'up to 100,000 Euros / 100,000 US Dollars',
-                'more than 100,000 Euros / 100,000 US Dollars',
-                'I prefer a costing model based on a monthly/annual subscription fee')
+levels_682 <- c('I prefer a costing model based on a monthly/annual subscription fee',
+                '> 100,000 Euro / US Dollars',
+                'up to 1,000 Euro / US Dollars',
+                'up to 10,000 Euro / US Dollars',
+                'up to 100 Euro / US Dollars', 
+                'up to 100,000 Euro / US Dollars',
+                'up to 50,000 Euro / US Dollars',
+                'up to 500 Euro / US Dollars'
+)
+
 
 df_682_freq <- df_682_freq[-9,]
+df_682_freq$amount <- levels_682
 df_682_freq_ord <- df_682_freq %>%
   arrange(freq) %>% 
   mutate(amount = factor(amount, levels=levels_682))
