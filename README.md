@@ -1,6 +1,6 @@
 # User requirements of Big Earth Data - Survey 2019
 
-This repo hosts the code developed to analyse and visualise the responses from a user requirements survey. The programming language R was used for datat analysis and visualisation.
+This repo hosts the code developed to analyse and visualise the responses from a user requirements survey. The programming language R was used for data analysis and visualisation.
 
 ## User requirements of Big Earth Data
 The survey was conducted between November 2018 and May 2019 with the aim to find out how users working with large volumes of environmental data interact with data, what challenges they face and how they would like to use cloud-based data services in the future.
@@ -16,8 +16,8 @@ Publication of the results is under preparation.
 
 ## Repository structure
 The repository is structured based on the order of the survey questions. There are two base modules, who load the data, required libraries and define some functions:
-- `[data_load.R](./data_load.R)`
-- `[data_survey_functions.R](./data_survey_functions.R)`
+- [data_load.R](./data_load.R)
+- [data_survey_functions.R](./data_survey_functions.R)
 
 Both scripts have to be loaded before the other scripts can be run. The other scripts have the code to analyse and visualise the respecitve question of the survey questionnaire.
 
