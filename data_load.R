@@ -45,7 +45,7 @@ df_11_freq_filter <- df_11_filter %>%
   arrange(freq) %>%               # sort your dataframe
   mutate(cor = factor(cor, unique(cor)))
 
-# Sort work sectors based on percent values
+# Sort countries based on percent values
 df_11_freq_ord <- df_11_freq %>%
   arrange(freq) %>%               # sort your dataframe
   mutate(cor = factor(cor, unique(cor)))
@@ -356,7 +356,7 @@ df_45_melt$`Processing type` <- factor(df_45_melt$`Processing type`, levels=df_4
 
 df_61 <- df_new[, c('X6.1')]
 
-levels_61 <- c('Not at all interested', 'Not interested', 'Neither not interested nor interested', 'Interested', 'Very interested')
+levels_61 <- c('Very interested', 'Interested', 'Neither not interested nor interested', 'Not interested', 'Not at all interested')
 
 df_61 <- as.data.frame(df_61[complete.cases(df_61)])
 nrow_61 <- nrow(df_61)
@@ -374,8 +374,8 @@ df_61_freq <- df_61_count %>%
 df_61_perc <- df_61_perc %>%
   arrange(freq) %>% 
   mutate(Interest = factor(Interest, levels=levels_61))
-
 df_61_freq$perc <- df_61_perc$freq
+df_61_freq_ord <- df_61_freq[order(factor(df_61_freq$Interest, levels=levels_61)),]
 
 df_611 <- df_new[,c('X6.1.1')]
 
@@ -392,7 +392,7 @@ colnames(df_62_freq) <- c('policy', 'freq')
 
 levels_62 <- c("Commercial cloud vendor, such as AWS or GCP",
                "Publicly-funded cloud, e.g. EOSC", 
-               'Publicly-funded specialised cloud, e.g.WekEO',
+               'Publicly-funded specialised cloud, e.g.WEkEO',
                "I do not mind",
                "None of the above")
 
