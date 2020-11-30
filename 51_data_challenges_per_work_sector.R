@@ -12,19 +12,20 @@ df_51 <- df_new[,c('X5.1.growing.data.volume',
                    'X5.1.lack.of.tools',
                    'X5.1.data.services.cost')]
 
-# Remove strange entries
-df_51 <- df_51[-67,]
 
-#df_subset <- cbind(dataSystems_freq, df_51)
 # Combine challenges with work sector responses
 df_subset <- cbind(df_21, df_51)
+# Remove strange responses
 df_subset <- df_subset[-67,]
 # Seperate rows for multiple work sector entries
 df_subset <- separate_rows(df_subset,1, sep=';')
 
-df_subset_A <- subset(df_subset[,c(2:ncol(df_subset))], (!is.na(df_subset[,19])))
-df_subset_A <- subset(df_subset[,c(2:ncol(df_subset))], df_subset[,1]=='Established company' | df_subset[,1]=='Start-up')
+# Select individual work sectors and run code until line 119
+df_subset_A <- subset(df_subset[,c(2:ncol(df_subset))], df_subset[,1]=='University')
 df_subset_A <- subset(df_subset[,c(2:ncol(df_subset))], df_subset[,1]=='Government')
+df_subset_A <- subset(df_subset[,c(2:ncol(df_subset))], df_subset[,1]=='Established company' | df_subset[,1]=='Start-up')
+df_subset_A <- subset(df_subset[,c(2:ncol(df_subset))], df_subset[,1]=='Intergovernmental organisation' | df_subset[,1]=='Non-profit')
+
 
 
 # Remove all NA entries
@@ -59,14 +60,20 @@ k_51 <- plyr::count(df_subset_A$X5.1.restricted.data.services)
 l_51 <- plyr::count(df_subset_A$X5.1.lack.of.tools)
 m_51 <- plyr::count(df_subset_A$X5.1.data.services.cost)
 
-a_51 <- rbind(a_51, list('No obstacle at all', 0))
+
+# In case an entry does not contain all five factors, add the missing factor with 0 entries 
+# --> Government: a_51, c_51 and k_51
+# --> Company and start-up: k_51
+
 a_51$x <- factor(a_51$x, unique(c(levels(a_51$x), list('No obstacle at all',0))))
+a_51 <- rbind(a_51, list('No obstacle at all', 0))
 
-c_51 <- rbind(c_51, list('No obstacle at all', 0))
 c_51$x <- factor(c_51$x, unique(c(levels(c_51$x), list('No obstacle at all',0))))
+c_51 <- rbind(c_51, list('No obstacle at all', 0))
 
-k_51 <- rbind(k_51, list('No obstacle at all', 0))
 k_51$x <- factor(k_51$x, unique(c(levels(k_51$x), list('No obstacle at all',0))))
+k_51 <- rbind(k_51, list('No obstacle at all', 0))
+
 
 # Bring frequencies together into one dataframe
 df_subset_A_freq <- a_51 %>% left_join(b_51, by='x') %>% left_join(c_51, by='x') %>% left_join(d_51, by='x') %>% 
@@ -89,48 +96,38 @@ colnames(df_subset_A_freq) <- c('Scale',
                           'Cost of data services'
 )
 
-
+# Set order of levels and factors in data frame
 df_subset_A_freq$Scale <- factor(df_subset_A_freq$Scale, levels=levels_51)
 
+# Calculate the relative frequencies and add the numbers to the 'scale' column
 df_subset_A_perc <- df_subset_A_freq[,-1] / nrow_51 * 100
 df_subset_A_perc <- cbind(df_subset_A_freq[1], df_subset_A_perc)
 
+# Order the factors for absolute and relative data frames
 df_subset_A_freq <- df_subset_A_freq[order(factor(df_subset_A_freq$Scale, levels=levels_51)),]
 df_subset_A_perc <- df_subset_A_perc[order(factor(df_subset_A_perc$Scale,levels=levels_51)),]
 
+# Calculate the total number of 'obstacle' responses and order it based on the 'obstacle' frequencies
 df_subset_A_main <- df_subset_A_freq[c(4,5),]
 df_subset_A_main_sum <- as.data.frame(colSums(df_subset_A_main[,-1]))
 df_subset_A_main_sum$items <- rownames(df_subset_A_main_sum)
 df_subset_A_main_ord <- df_subset_A_main_sum[order(df_subset_A_main_sum$`colSums(df_subset_A_main[, -1])`),]
 
+# Melt the two data frames from a multi-column DF to a single-column DF
 df_subset_A_freq_melt <- reshape2::melt(df_subset_A_freq)
 df_subset_A_perc_melt <- reshape2::melt(df_subset_A_perc)
 
+# Set the factors to the melted DF
 df_subset_A_freq_melt$variable <- factor(df_subset_A_freq_melt$variable, levels=df_subset_A_main_ord$items)
 df_subset_A_perc_melt$variable <- factor(df_subset_A_perc_melt$variable, levels=df_subset_A_main_ord$items)
 
-likert_perc <- ggplot(data=df_subset_A_perc_melt, aes(x=variable, y=value, fill=Scale)) +
-  geom_bar(stat='identity') +
-  scale_fill_manual(values=col) +
-  labs(x="Challenge", y="Percent") +
-  coord_flip() +
-  theme_light()+
-  scale_x_discrete(labels = wrap_format(20)) +
-  guides(fill=guide_legend(reverse=TRUE))+
-  #  scale_x_continuous(name="Percent") +
-  
-  theme(legend.position='bottom',
-        legend.title=element_blank(),
-        axis.text=element_text(size=14),
-        legend.text = element_text(size=12),
-        strip.text.x=element_text(size=12),
-        axis.title = element_text(size=14))
-
+# Depending on the work sector category - assign a new name to the data frame
 df_university <- df_subset_A_perc_melt
 df_government <- df_subset_A_perc_melt
 df_company <- df_subset_A_perc_melt
 df_io_non_profit <- df_subset_A_perc_melt
 
+# For each work sector - extract the indivdiual challenge and bring them together into a data frame per challenge and work sector
 # Growing data volume
 growing_volume_1 <- subset(df_university, df_university[,2]=='Growing data volume')
 growing_volume_1$work_sector <- 'University'
@@ -145,9 +142,9 @@ growing_volume_4 <- subset(df_io_non_profit, df_io_non_profit[,2]=='Growing data
 growing_volume_4$work_sector <- 'Intergov. Org. / Non-profit'
 
 a_final <- rbind(growing_volume_1,growing_volume_2, growing_volume_3, growing_volume_4)
+save(a_final, file='a_final.Rda')
 
-# Limite processing capacity
-
+# Limited processing capacity
 b_1 <- subset(df_university, df_university[,2]=='Limited processing capacity')
 b_1$work_sector <- 'University'
 
@@ -161,6 +158,7 @@ b_4 <- subset(df_io_non_profit, df_io_non_profit[,2]=='Limited processing capaci
 b_4$work_sector <- 'Intergov. Org. / Non-profit'
 
 b_final <- rbind(b_1,b_2, b_3, b_4)
+save(b_final, file='b_final.Rda')
 
 #Data are disseminated in a non-standardised way
 c_1 <- subset(df_university, df_university[,2]=='Data are dissemintated in a non-standardised way')
@@ -176,9 +174,9 @@ c_4 <- subset(df_io_non_profit, df_io_non_profit[,2]=='Data are dissemintated in
 c_4$work_sector <- 'Intergov. Org. / Non-profit'
 
 c_final <- rbind(c_1,c_2, c_3, c_4)
+save(c_final, file='c_final.Rda')
 
 # Too many data platforms
-
 d_1 <- subset(df_university, df_university[,2]=='Too many data platforms and portals')
 d_1$work_sector <- 'University'
 
@@ -192,6 +190,7 @@ d_4 <- subset(df_io_non_profit, df_io_non_profit[,2]=='Too many data platforms a
 d_4$work_sector <- 'Intergov. Org. / Non-profit'
 
 d_final <- rbind(d_1, d_2, d_3, d_4)
+save(d_final, file='d_final.Rda')
 
 # data discovery
 e_1 <- subset(df_university, df_university[,2]=='Data discovery')
@@ -207,6 +206,7 @@ e_4 <- subset(df_io_non_profit, df_io_non_profit[,2]=='Data discovery')
 e_4$work_sector <- 'Intergov. Org. / Non-profit'
 
 e_final <- rbind(e_1, e_2, e_3, e_4)
+save(e_final, file='e_final.Rda')
 
 # Data service are too restricted
 f_1 <- subset(df_university, df_university[,2]=='Data services are too restricted')
@@ -222,6 +222,7 @@ f_4 <- subset(df_io_non_profit, df_io_non_profit[,2]=='Data services are too res
 f_4$work_sector <- 'Intergov. Org. / Non-profit'
 
 f_final <- rbind(f_1, f_2, f_3, f_4)
+save(f_final, file='f_final.Rda')
 
 # Complex data formats
 g_1 <- subset(df_university, df_university[,2]=='Complex data formats')
@@ -237,7 +238,7 @@ g_4 <- subset(df_io_non_profit, df_io_non_profit[,2]=='Complex data formats')
 g_4$work_sector <- 'Intergov. Org. / Non-profit'
 
 g_final <- rbind(g_1, g_2, g_3, g_4)
-
+save(g_final, file='g_final.Rda')
 
 # Lacking easy-to-use tools
 h_1 <- subset(df_university, df_university[,2]=='Lacking easy-to-use tools ')
@@ -253,6 +254,7 @@ h_4 <- subset(df_io_non_profit, df_io_non_profit[,2]=='Lacking easy-to-use tools
 h_4$work_sector <- 'Intergov. Org. / Non-profit'
 
 h_final <- rbind(h_1, h_2, h_3, h_4)
+save(h_final, file='h_final.Rda')
 
 # Data access systems
 i_1 <- subset(df_university, df_university[,2]=='Data access systems')
@@ -268,6 +270,7 @@ i_4 <- subset(df_io_non_profit, df_io_non_profit[,2]=='Data access systems')
 i_4$work_sector <- 'Intergov. Org. / Non-profit'
 
 i_final <- rbind(i_1, i_2, i_3, i_4)
+save(i_final, file='i_final.Rda')
 
 # Cost of data services
 k_1 <- subset(df_university, df_university[,2]=='Cost of data services')
@@ -283,6 +286,7 @@ k_4 <- subset(df_io_non_profit, df_io_non_profit[,2]=='Cost of data services')
 k_4$work_sector <- 'Intergov. Org. / Non-profit'
 
 k_final <- rbind(k_1, k_2, k_3, k_4)
+save(k_final, file='k_final.Rda')
 
 # Combining different kind of geospatial data
 l_1 <- subset(df_university, df_university[,2]=='Combining different kind of geospatial data')
@@ -298,6 +302,7 @@ l_4 <- subset(df_io_non_profit, df_io_non_profit[,2]=='Combining different kind 
 l_4$work_sector <- 'Intergov. Org. / Non-profit'
 
 l_final <- rbind(l_1, l_2, l_3, l_4)
+save(l_final, file='l_final.Rda')
 
 # Data complexity
 m_1 <- subset(df_university, df_university[,2]=='Data complexity')
@@ -313,21 +318,4 @@ m_4 <- subset(df_io_non_profit, df_io_non_profit[,2]=='Data complexity')
 m_4$work_sector <- 'Intergov. Org. / Non-profit'
 
 m_final <- rbind(m_1, m_2, m_3, m_4)
-
-likert_perc <- ggplot(data=m_final, aes(x=work_sector, y=value, fill=Scale)) +
-  geom_bar(stat='identity') +
-  scale_fill_manual(values=col) +
-  labs(x="Challenge", y="Percent") +
-  coord_flip() +
-  theme_light()+
-  scale_x_discrete(labels = wrap_format(20)) +
-  guides(fill=guide_legend(reverse=TRUE))+
-  #  scale_x_continuous(name="Percent") +
-  
-  theme(legend.position='bottom',
-        legend.title=element_blank(),
-        axis.text=element_text(size=14),
-        legend.text = element_text(size=12),
-        strip.text.x=element_text(size=12),
-        axis.title = element_text(size=14),
-        aspect.ratio=1/3)
+save(m_final, file='m_final.Rda')

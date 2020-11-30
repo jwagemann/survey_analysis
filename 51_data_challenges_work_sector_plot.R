@@ -1,20 +1,8 @@
-library(gtable)
-library(grid)
+# Load .rdata files
+file_names = as.list(dir(pattern='*_final.Rda'))
+lapply(file_names, load, environment())
 
-
-save(a_final, file='a_final.Rda')
-save(b_final, file='b_final.Rda')
-save(c_final, file='c_final.Rda')
-save(d_final, file='d_final.Rda')
-save(e_final, file='e_final.Rda')
-save(f_final, file='f_final.Rda')
-save(h_final, file='h_final.Rda')
-save(i_final, file='i_final.Rda')
-save(k_final, file='k_final.Rda')
-save(l_final, file='l_final.Rda')
-save(m_final, file='m_final.Rda')
-
-
+# Horizontal stacked bar plot for all challenge categories
 likert_1 <- ggplot(data=a_final, aes(x=work_sector, y=value, fill=Scale)) +
   geom_bar(stat='identity') +
   scale_fill_manual(values=col) +
@@ -245,24 +233,13 @@ likert_12 <- ggplot(data=m_final, aes(x=work_sector, y=value, fill=Scale)) +
         aspect.ratio=1/6,
         plot.margin=unit(c(0,0.5,2,-0.2), "cm"))
 
-g_legend<-function(a.gplot){
-  tmp <- ggplot_gtable(ggplot_build(a.gplot))
-  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
-  legend <- tmp$grobs[[leg]]
-  return(legend)}
-
-mylegend <- g_legend(likert_6)
-mylegend
-grid.newpage()
-g3 <- gtable_add_rows(ggplotGrob(likert_12),unit(11,'pt'))
-g3 <- gtable_add_rows(ggplotGrob(likert_12),unit(0.5, 'cm'))
-g3 <- gtable_add_rows(g3,unit(1,'cm'))
+# Bring left column plots together
 g1 <- rbind(ggplotGrob(likert_1), ggplotGrob(likert_2), ggplotGrob(likert_3), 
             ggplotGrob(likert_4), ggplotGrob(likert_5), ggplotGrob(likert_6), size='first')
+# Bring right column plots together
 g2 <- rbind(ggplotGrob(likert_7), ggplotGrob(likert_8), ggplotGrob(likert_9), 
             ggplotGrob(likert_10), ggplotGrob(likert_11), ggplotGrob(likert_12), size='first')
-
+# Combine everything onto a grid table
+grid.newpage()
 grid.draw(cbind(g1,g2))
 
-test <- subset(m_final[,3:4], m_final$Scale == 'An obstacle' | m_final$Scale == 'A great obstacle')
-rowsum(test[,1], as.integer(gl(nrow(test), 2, nrow(test))))          
