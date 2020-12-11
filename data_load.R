@@ -457,6 +457,7 @@ df_66 <- df_new[,'X6.6']
 
 df_67 <- df_new[,'X6.7']
 df_67_freq <- plyr::count(df_67)
+df_67_freq$perc <- df_67_freq$freq / sum(df_67_freq$freq) * 100
 
 df_671 <- df_new['X6.7.1']
 
@@ -471,16 +472,18 @@ df_681_freq <- splitInRows(df_681,1,nrow_681)
 colnames(df_681_freq) <- c('cloud.service', 'freq','perc')
 
 df_68_freq_ord <- df_68_freq %>%
-  arrange(freq) %>% 
+  arrange(-freq) %>% 
   mutate(x = factor(x, unique(x)))
 
 df_68_freq_ord <- df_68_freq_ord[-1,]
+df_68_freq_ord$perc <- df_68_freq_ord[,2] / no_of_respondents * 100
 
 df_681_freq_ord <- df_681_freq %>%
   arrange(freq) %>% 
   mutate(cloud.service = factor(cloud.service, unique(cloud.service)))
 
 df_681_freq_ord <- df_681_freq_ord[c(-1,-5),]
+df_681_freq_ord$perc <- df_681_freq_ord[,2] / no_of_respondents * 100
 
 df_6811 <- df_new[,'X6.8.1.1']
 
@@ -489,13 +492,24 @@ df_682_freq <- splitInRows(df_682,1,nrow_681)
 colnames(df_682_freq) <- c('amount', 'freq','perc')
 
 levels_682 <- c('I prefer a costing model based on a monthly/annual subscription fee',
-                '> 100,000 Euro / US Dollars',
-                'up to 1,000 Euro / US Dollars',
-                'up to 10,000 Euro / US Dollars',
-                'up to 100 Euro / US Dollars', 
-                'up to 100,000 Euro / US Dollars',
-                'up to 50,000 Euro / US Dollars',
-                'up to 500 Euro / US Dollars'
+                '> 100,000 Euro/USD',
+                'up to 1,000 EUR/USD',
+                'up to 10,000 EUR/USD',
+                'up to 100 EUR/USD', 
+                'up to 100,000 EUR/USD',
+                'up to 50,000 EUR/USD',
+                'up to 500 EUR/USD'
+)
+
+levels_682_2 <- c(
+                '> 100,000 Euro/USD',
+                'up to 100,000 EUR/USD',
+                'up to 50,000 EUR/USD',
+                'up to 10,000 EUR/USD',
+                'up to 1,000 EUR/USD',
+                'up to 500 EUR/USD',
+                'up to 100 EUR/USD', 
+                'I prefer a costing model based on a monthly/annual subscription fee'
 )
 
 
@@ -503,7 +517,9 @@ df_682_freq <- df_682_freq[-9,]
 df_682_freq$amount <- levels_682
 df_682_freq_ord <- df_682_freq %>%
   arrange(freq) %>% 
-  mutate(amount = factor(amount, levels=levels_682))
+  mutate(amount = factor(amount, levels=levels_682_2))
+
+df_682_freq_ord$amount <-factor(df_682_freq_ord$amount, levels=df_682_freq_ord$amount[c(1,2,3,4,6,5,7,8)])
 
 #####################################################################
 # 7 Final comment
