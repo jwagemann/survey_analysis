@@ -12,7 +12,7 @@ The survey was conducted in collaboration with the [European Centre for Medium-R
 The questionnaire and an anonymised version of the survey responses are available on Zenodo with the following DOI:
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4075058.svg)](https://doi.org/10.5281/zenodo.4075058).
 
-Publication of the results is currently under review the journal [Computer & Geosciences](https://www.journals.elsevier.com/computers-and-geosciences).
+Publication of the results is currently under review in the journal [Computer & Geosciences](https://www.journals.elsevier.com/computers-and-geosciences).
 
 ## Repository structure
 The repository is structured based on the order of the survey questions. There are two base modules, who load the data, required libraries and define some functions:
