@@ -53,14 +53,14 @@ likert_perc_65_right <- ggplot(data=df_65_freq_melt, aes(x=variable, y=value, fi
   coord_flip()+
   ylim(0,120)+
   theme(legend.position="top",
-        axis.text=element_text(size=12),
+        axis.text=element_text(size=16),
         aspect.ratio=2/1,
-        legend.text = element_text(size=12),
+        legend.text = element_text(size=16),
         legend.title=element_blank(),
-        strip.text.x=element_text(size=12),
-        axis.title = element_text(size=14)) +
-  geom_text(aes(y=6, label=value), position=position_dodge(width=0.7), size=5, color='white') +  
-  geom_label(aes(y=115,label=round(perc,1)), position=position_dodge(width=0.7), size=5, show.legend=FALSE) +  
+        strip.text.x=element_text(size=16),
+        axis.title = element_text(size=16)) +
+  geom_text(aes(y=6, label=value), position=position_dodge(width=0.7), size=6, color='white') +  
+  geom_label(aes(y=115,label=round(perc,1)), position=position_dodge(width=0.7), size=6, show.legend=FALSE) +  
   scale_x_discrete(labels = wrap_format(10),position='top') +
   guides(fill=guide_legend(reverse=TRUE))
 
@@ -72,16 +72,16 @@ likert_perc_65_left <- ggplot(data=df_65_freq_melt_not_important, aes(x=variable
   theme_light()+
   coord_flip()+
   theme(legend.position="top",
-        axis.text=element_text(size=12),
+        axis.text=element_text(size=16),
         aspect.ratio=2/1,
-        legend.text = element_text(size=12),
+        legend.text = element_text(size=16),
         legend.title=element_blank(),
-        strip.text.x=element_text(size=12),
-        axis.title = element_text(size=14)) +
+        strip.text.x=element_text(size=16),
+        axis.title = element_text(size=16)) +
   scale_x_discrete(labels = wrap_format(10)) +
   scale_y_reverse(lim=c(120,0))+
-  geom_label(aes(y=115,label=round(not_important_perc,1)), size=5, show.legend=FALSE) +
-  geom_text(aes(y=6, label=value), position=position_dodge(width=0.7), size=5, color='white') +  
+  geom_label(aes(y=115,label=round(not_important_perc,1)), size=6, show.legend=FALSE) +
+  geom_text(aes(y=6, label=value), position=position_dodge(width=0.7), size=6, color='white') +  
   guides(fill=guide_legend(reverse=TRUE))
 
 # Bring both plots together

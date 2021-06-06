@@ -14,21 +14,23 @@ colnames(vals_combined) <- c('obstacle', 'no_obstacle', 'variable')
 # Merge the data frames above with the prepared data frame
 df_51_perc_melt_2 <- merge(x=df_51_perc_melt, y=vals_combined, by='variable', all.x=TRUE )
 
+col=brewer.pal(n=5,'BrBG')
+
 # Horizontal stacked barplot to show Big Earth Data challenges
 likert_perc <- ggplot(data=df_51_perc_melt_2, aes(x=variable, y=value, fill=Scale)) +
   geom_bar(stat='identity') +
   scale_fill_manual(values=brewer.pal(n=5,'BrBG')) +
-  labs(x="Challenge", y="rel. Frequency") +
+  labs(x="Challenge\n", y="%") +
   coord_flip() +
   theme_light()+
   ylim(-4,104)+
-  scale_x_discrete(labels = wrap_format(20)) +
+  scale_x_discrete(labels = wrap_format(22)) +
   guides(fill=guide_legend(reverse=TRUE))+
   geom_label(y=-4, aes(label=round(obstacle,1)), fill=col[5],col='white', size=6 )+
   geom_label(y=104, aes(label=round(no_obstacle,1)), fill=col[1],col='white', size=6 )+
   theme(legend.position='bottom',
         legend.title=element_blank(),
-    axis.text=element_text(size=14),
-        legend.text = element_text(size=12),
-        strip.text.x=element_text(size=12),
-        axis.title = element_text(size=14))
+         axis.text=element_text(size=16),
+        legend.text = element_text(size=16),
+        strip.text.x=element_text(size=16),
+        axis.title = element_text(size=16))

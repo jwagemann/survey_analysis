@@ -24,18 +24,18 @@ df_45_melt_2 <-cbind(df_45_melt, df_45_perc)
 likert_perc <- ggplot(data=df_45_melt_2, aes(x=reorder(variable, desc(variable)), y=df_45_perc, fill=Frequency)) +
   geom_bar(stat='identity') +
   scale_fill_manual(values=brewer.pal(n=3,'BrBG')) +
-  labs(x="Modality - data processing", y="rel. Frequency", Colour="") +
+  labs(x="Modality - data processing\n", y="%", Colour="") +
   coord_flip() +
   theme_light() +
   theme(legend.position='top',
-        plot.title=element_text(size=14),
-        axis.text=element_text(size=14),
-        legend.text = element_text(size=12),
-        strip.text.x=element_text(size=12),
+        plot.title=element_text(size=16),
+        axis.text=element_text(size=16),
+        legend.text = element_text(size=16),
+        strip.text.x=element_text(size=14),
         legend.title = element_blank(),
-        axis.title = element_text(size=14),
+        axis.title = element_text(size=16),
         aspect.ratio = 1/3,
         axis.title.x = element_text(margin=margin(t=10,r=0,b=0,l=0))) +
   guides(fill = guide_legend(reverse=TRUE))+
-  geom_text(aes(label = round(df_45_perc,1)), color='black', size = 5, position=position_stack(vjust=0.5) )
+  geom_text(aes(label = round(df_45_perc,1)), color='black', size = 5, position=position_stack(vjust=0.5) )+
   scale_x_discrete(labels = label_wrap(20))

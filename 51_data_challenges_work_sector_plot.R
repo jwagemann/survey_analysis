@@ -15,7 +15,7 @@ likert_1 <- ggplot(data=a_final, aes(x=work_sector, y=value, fill=Scale)) +
   theme(legend.position='none',
         legend.title=element_blank(),
         axis.ticks.x = element_blank(),
-        axis.text.y = element_text(size=8),
+        axis.text.y = element_text(size=10),
         axis.text.x=element_blank(),
         plot.title = element_text(size=10, face='italic', vjust=-1),
         strip.text.x=element_text(size=10),
@@ -34,7 +34,7 @@ likert_2 <- ggplot(data=b_final, aes(x=work_sector, y=value, fill=Scale)) +
   theme(legend.position='none',
         legend.title=element_blank(),
         axis.ticks.x = element_blank(),
-        axis.text.y = element_text(size=8),
+        axis.text.y = element_text(size=10),
         axis.text.x=element_blank(),
         plot.title = element_text(size=10, face='italic', vjust=-1),
         strip.text.x=element_text(size=10),
@@ -53,7 +53,7 @@ likert_3 <- ggplot(data=c_final, aes(x=work_sector, y=value, fill=Scale)) +
   theme(legend.position='none',
         legend.title=element_blank(),
         axis.ticks.x = element_blank(),
-        axis.text.y = element_text(size=8),
+        axis.text.y = element_text(size=10),
         axis.text.x=element_blank(),
         plot.title = element_text(size=10, face='italic', vjust=-1),
         strip.text.x=element_text(size=10),
@@ -72,7 +72,7 @@ likert_4 <- ggplot(data=d_final, aes(x=work_sector, y=value, fill=Scale)) +
   theme(legend.position='none',
         legend.title=element_blank(),
         axis.ticks.x = element_blank(),
-        axis.text.y = element_text(size=8),
+        axis.text.y = element_text(size=10),
         axis.text.x=element_blank(),
         plot.title = element_text(size=10, face='italic', vjust=-1),
         strip.text.x=element_text(size=10),
@@ -91,7 +91,7 @@ likert_5 <- ggplot(data=e_final, aes(x=work_sector, y=value, fill=Scale)) +
   theme(legend.position='none',
         legend.title=element_blank(),
         axis.ticks.x = element_blank(),
-        axis.text.y = element_text(size=8),
+        axis.text.y = element_text(size=10),
         axis.text.x=element_blank(),
         plot.title = element_text(size=10, face='italic', vjust=-1),
         strip.text.x=element_text(size=10),
@@ -102,7 +102,7 @@ likert_5 <- ggplot(data=e_final, aes(x=work_sector, y=value, fill=Scale)) +
 likert_6 <- ggplot(data=f_final, aes(x=work_sector, y=value, fill=Scale)) +
   geom_bar(stat='identity') +
   scale_fill_manual(values=col) +
-  labs(x=" ", y="Percentage") +
+  labs(x=" ", y="%") +
   ggtitle('Data services are too restricted') +
   coord_flip() +
   theme_light()+
@@ -110,16 +110,16 @@ likert_6 <- ggplot(data=f_final, aes(x=work_sector, y=value, fill=Scale)) +
   guides(fill=guide_legend(reverse=TRUE))+
   theme(legend.position=c(0.72,-1),
         legend.title=element_blank(),
-        legend.text=element_text(size=8),
+        legend.text=element_text(size=12),
         legend.key.size=unit(0.5,'cm'),
         legend.direction='horizontal',
         axis.ticks.x = element_blank(),
-        axis.text.x = element_text(size=8),
-        axis.text.y=element_text(size=8),
+        axis.text.x = element_text(size=10),
+        axis.text.y=element_text(size=10),
         plot.title = element_text(size=10, face='italic', vjust=-1),
         strip.text.x=element_text(size=10),
         aspect.ratio=1/6,
-        plot.margin=unit(c(0,-0.5,2,0.5), "cm"))
+        plot.margin=unit(c(0,-0.5,1.5,0.5), "cm"))
 
 
 likert_7 <- ggplot(data=g_final, aes(x=work_sector, y=value, fill=Scale)) +
@@ -215,7 +215,7 @@ likert_11 <- ggplot(data=l_final, aes(x=work_sector, y=value, fill=Scale)) +
 likert_12 <- ggplot(data=m_final, aes(x=work_sector, y=value, fill=Scale)) +
   geom_bar(stat='identity') +
   scale_fill_manual(values=col) +
-  labs(x=" ", y="Percentage") +
+  labs(x=" ", y="%") +
   ggtitle('Data complexity') +
   coord_flip() +
   theme_light()+
@@ -223,15 +223,15 @@ likert_12 <- ggplot(data=m_final, aes(x=work_sector, y=value, fill=Scale)) +
   guides(fill=guide_legend(reverse=TRUE, labels=wrap_format(10)))+
   theme(legend.position='none',
         legend.title=element_blank(),
-        legend.text=element_text(size=7),
+        legend.text=element_text(size=10),
         legend.key.size=unit(0.5,'cm'),
         axis.ticks.x = element_blank(),
         axis.text.y = element_blank(),
-        axis.text.x=element_text(size=8),
+        axis.text.x=element_text(size=10),
         plot.title = element_text(size=10, face='italic', vjust=-1),
-        strip.text.x=element_text(size=8),
+        strip.text.x=element_text(size=10),
         aspect.ratio=1/6,
-        plot.margin=unit(c(0,0.5,2,-0.2), "cm"))
+        plot.margin=unit(c(0,0.5,1.5,-0.2), "cm"))
 
 # Bring left column plots together
 g1 <- rbind(ggplotGrob(likert_1), ggplotGrob(likert_2), ggplotGrob(likert_3), 

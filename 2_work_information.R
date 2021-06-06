@@ -1,24 +1,19 @@
 
 # Bar plot frequencies of work sectors
 Freq = df_21_summary$Freq
-barplot_21 <- ggplot(df_21_summary[-2,], aes(fill=Var1,y=per, x=reorder(Var1, -per))) + 
+barplot_21 <- ggplot(df_21_summary[-2,], aes(fill=Var1,y=Freq, x=reorder(Var1, -Freq))) + 
   geom_bar(stat="identity",width=0.7) +
-  geom_point(aes(y=Freq/1.7), color='black')+
-  scale_y_continuous(
-    name='Percent',
-    # Add a second axis and specify its features
-    sec.axis = sec_axis(~ .*1.7, name="n"),
-    lim=c(0,70)) +
+  ylim(0, 130) +
   scale_fill_brewer(palette="Spectral") +
-  labs(x="Work sector", y="rel. Frequency") +
+  labs(x="Work sector", y="n") +
   scale_x_discrete(labels=wrap_format(5)) +
-  geom_text(aes(label=round(per,1)), position=position_dodge(width=0.9), vjust=1.8, color='black', size=5) +
-  geom_text(aes(y=Freq/1.7, label=Freq), vjust=-1, color='black', size=5) +
+  geom_text(aes(label=Freq), position=position_dodge(width=0.9), vjust=1.4, color='black', size=5) +
+  geom_label(y=125, aes(label=round(per,1)), size=5, show.legend=FALSE) +
   theme_light() +
   theme(legend.title=element_blank(), legend.position = "none",
-        axis.text=element_text(size=12),
-        legend.text = element_text(size=12),
-        strip.text.x=element_text(size=12),
+        axis.text=element_text(size=14),
+        legend.text = element_text(size=14),
+        strip.text.x=element_text(size=14),
         axis.title = element_text(size=14),
         axis.title.x = element_text(margin=margin(t=10, r=0, b=0,l=0)),
         axis.text.y.right = element_text(colour = "black"),
@@ -32,16 +27,16 @@ barplot_21 <- ggplot(df_21_summary[-2,], aes(fill=Var1,y=per, x=reorder(Var1, -p
 barplot_22 <- ggplot(df_22_summary[1:2,], aes(fill=Var1,y=per, x=Var1)) + 
   geom_bar(stat="identity",width=0.7) +
   scale_fill_manual(values=c('#006D2C', '#6E016B'))+
-  labs(x="", y="Percent") +
+  labs(x="", y="%") +
   coord_flip() +
   scale_x_discrete(labels=wrap_format(5)) +
   ylim(0,100) +
   geom_text(aes(label=round(per,1)), color='white', size=5, hjust=1.5)+
   theme_light() +
   theme(legend.title=element_blank(), legend.position = "none",
-        axis.text=element_text(size=12),
-        legend.text = element_text(size=12),
-        strip.text.x=element_text(size=12),
+        axis.text=element_text(size=14),
+        legend.text = element_text(size=14),
+        strip.text.x=element_text(size=14),
         axis.title = element_text(size=14),
         plot.margin = unit(c(1, 1, 0, 3), "lines"))
 
@@ -55,9 +50,9 @@ barplot_221 <- ggplot(df_221_summary[-1,], aes(fill=df_221,y=Freq, x=reorder(df_
   geom_text(aes(y=0, label=Freq), color='black', size=5, vjust=-.8)+
   theme_light() +
   theme(legend.title=element_blank(), legend.position = "none",
-        axis.text=element_text(size=12),
-        legend.text = element_text(size=12),
-        strip.text.x=element_text(size=12),
+        axis.text=element_text(size=14),
+        legend.text = element_text(size=14),
+        strip.text.x=element_text(size=14),
         axis.title = element_text(size=14),
         plot.margin = unit(c(1, 1, 0, 3), "lines"))
 
@@ -71,9 +66,9 @@ barplot_222 <- ggplot(df_222_summary[-2,], aes(fill=df_222,y=Freq, x=reorder(df_
   geom_text(aes(y=0, label=Freq), color='black', size=5, vjust=-.8)+
   theme_light() +
   theme(legend.title=element_blank(), legend.position = "none",
-        axis.text=element_text(size=12),
-        legend.text = element_text(size=12),
-        strip.text.x=element_text(size=12),
+        axis.text=element_text(size=16),
+        legend.text = element_text(size=14),
+        strip.text.x=element_text(size=14),
         axis.title = element_text(size=14),
         plot.margin = unit(c(1, 1, 0, 3), "lines"))
 

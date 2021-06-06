@@ -1,25 +1,4 @@
 
-barplot_62 <- ggplot(df_62_freq_ord, aes(fill=policy,y=perc, x=policy)) + 
-  geom_bar(stat="identity",width=0.7) +
-  geom_point(aes(y=freq/2), color='black', group=1) +
-  scale_fill_uchicago(palette='light') +
-  scale_x_discrete(labels = wrap_format(20)) +
-  labs(x="", y="n") +
-  scale_y_continuous(
-    name='rel. Frequency',
-    # Add a second axis and specify its features
-    sec.axis = sec_axis(~ .*2, name="n"),
-    lim=c(0,45)) +
-  geom_text(aes(y=0,label=round(perc,1)), color='white', vjust=-0.5, size=5)+
-  geom_text(aes(y=freq/2, label=freq), color='black', vjust=-1, size=5)+
-  theme_light() + 
-  theme(legend.position='none',
-        axis.text=element_text(size=12),
-        legend.text = element_text(size=12),
-        strip.text.x=element_text(size=12),
-        axis.title = element_text(size=14),
-        aspect.ratio=1/3)
-
 ####################################################
 # Create regional subsets for US / Canada and Europe
 ####################################################
@@ -32,8 +11,11 @@ df_filter_us <- as.data.frame(subset(df_combined, df_combined[,2]=='United State
 
 # Caculate frequencies per subset
 df_62_eur <- plyr::count(df_filter_eur[,-1])
+df_62_eur$per <- df_62_eur$freq / nrow(df_filter_eur)
 df_62_us <- plyr::count(df_filter_us[,-1])
+df_62_us$per <- df_62_us$freq / nrow(df_filter_us)
 df_62_total <- plyr::count(df_62)
+df_62_total$per <- df_62_total$freq / nrow(df_combined)
 df_62_total$region <- 'Total'
 
 # Bring everything together into one data frame
@@ -50,23 +32,28 @@ df_final_ord <- df_final %>%
   arrange(freq) %>% 
   mutate(policy = factor(policy, levels=levels_62))
 
+col <- brewer.pal(n=5,'BrBG')
+
 # Grouped bar plot
-ggplot(df_final_ord, aes(y=freq, x=policy)) + 
+policy_regional <- ggplot(df_final_ord, aes(y=per*100, x=policy)) + 
   geom_bar(stat="identity",position=position_dodge(), width=0.7, aes(fill=region)) +
-  labs(x="Preference of cloud service policy", y="n") +
-  scale_fill_uchicago(palette='light') +
-  ylim(0,110) +
+  labs(x="", y="Percent\n") +
+  scale_fill_manual(values=c('grey', col[5], '#FFD77B')) +
+  ylim(-10,60) +
   theme_light() + 
   theme(legend.direction='horizontal',
         legend.title = element_blank(),
-        legend.position=c(0.68,0.9),
-        axis.text=element_text(size=12),
-        legend.text = element_text(size=12),
-        strip.text.x=element_text(size=12),
-        axis.title = element_text(size=14),
+        legend.position=c(0.73,0.9),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.text.y=element_text(size=16),
+        legend.text = element_text(size=16),
+        strip.text.x=element_text(size=16),
+        axis.title = element_text(size=16),
         aspect.ratio=1/3) +
   scale_x_discrete(labels = wrap_format(20)) +
-  geom_text(aes(y=freq, label=freq, fill=region), position=position_dodge(width=0.7), vjust=-1, size=4, color='darkgrey')
+  geom_label(aes(y=-5, label=round(per*100,0), fill=region), position=position_dodge(width=0.7), size=5, color='black',
+             show.legend=FALSE)
 
 ####################################################
 # Create subsets for work sectors
@@ -106,19 +93,21 @@ df_final_ws_ord <- df_final_ws %>%
   mutate(policy = factor(policy, levels=levels_62))
 
 # Grouped bar plot
-ggplot(df_final_ws_ord, aes(y=perc, x=policy)) + 
+policy_ws <- ggplot(df_final_ws_ord, aes(y=perc, x=policy)) + 
   geom_bar(stat="identity",position=position_dodge(), width=0.7, aes(fill=sector)) +
-  labs(x="Preference of cloud service policy", y="Percent") +
-  scale_fill_uchicago(palette='light') +
+  labs(x="\nPreference of cloud service policy", y="Percent\n") +
+  scale_fill_uchicago(palette='light', alpha=0.8) +
   theme_light() + 
-  ylim(-1,50)+
+  ylim(-10,70)+
   theme(legend.direction='horizontal',
         legend.title = element_blank(),
-        legend.position='top',
-        axis.text=element_text(size=12),
-        legend.text = element_text(size=12),
-        strip.text.x=element_text(size=12),
-        axis.title = element_text(size=14),
-        aspect.ratio=1/4) +
-  scale_x_discrete(labels = wrap_format(25)) +
-  geom_text(aes(y=perc, label=round(perc,1), fill=sector), position=position_dodge(width=0.7), vjust=-1, size=4, color='darkgrey')
+        legend.position=c(0.60,0.9),
+        axis.text=element_text(size=16),
+        legend.text = element_text(size=16),
+        strip.text.x=element_text(size=16),
+        axis.title = element_text(size=16),
+        aspect.ratio=1/3) +
+  scale_x_discrete(labels = wrap_format(20)) +
+  geom_label(aes(y=-5, label=round(perc,0), fill=sector), position=position_dodge(width=0.7), size=5, color='black', show.legend=FALSE)
+
+grid.draw(rbind(ggplotGrob(policy_regional), ggplotGrob(policy_ws), size='first'))

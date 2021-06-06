@@ -36,10 +36,10 @@ df_freq_us <- splitInRows(df_filter_us[,-1],3,nrow(df_filter_us))
 ####################################################
 # Create data frame with total and regions for US / Canada and Europe
 ####################################################
-df_total = df_421_order[-4,]
+df_total = df_421_order[c(-4,-1),]
 df_total$region = 'Total'
-df_eur = df_freq_eur[-7,-2]
-df_us = df_freq_us[-7,-2]
+df_eur = df_freq_eur[c(-7,-5),-2]
+df_us = df_freq_us[c(-7,-5),-2]
 
 df_final <- rbind(df_total, df_eur, df_us)
 
@@ -50,17 +50,18 @@ df_final$region <- factor(df_final$region,levels=levels_421)
 # Barplot of absolute numbers for three regions: total, Europe and US / Canada
 ggplot(df_final, aes(y=freq, x=reorder(software, -freq))) + 
   geom_bar(stat="identity",position=position_dodge(), width=0.7, aes(fill=region)) +
-  labs(x="Desktop-based software", y="n") +
+  labs(x="\nDesktop-based software", y="n\n") +
   scale_fill_uchicago(palette='light') +
   ylim(0,110) +
   theme_light() + 
   theme(legend.direction='horizontal',
         legend.title = element_blank(),
         legend.position=c(0.68,0.9),
-        axis.text=element_text(size=12),
-        legend.text = element_text(size=12),
-        strip.text.x=element_text(size=12),
-        axis.title = element_text(size=14),
+        axis.text=element_text(size=16),
+        legend.text = element_text(size=16),
+        strip.text.x=element_text(size=16),
+        axis.title = element_text(size=16),
         aspect.ratio=1/3) +
   scale_x_discrete(labels = wrap_format(10)) +
-  geom_text(aes(y=freq, label=freq, fill=region), position=position_dodge(width=0.7), vjust=-1, size=4, color='darkgrey')
+  geom_text(aes(y=freq, label=freq, fill=region), position=position_dodge(width=0.7), vjust=-1, size=6, color='black')
+

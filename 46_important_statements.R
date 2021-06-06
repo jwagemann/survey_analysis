@@ -27,12 +27,13 @@ df_46_perc_melt_2$variable <- revalue(factor(df_46_perc_melt_2$variable),c("stan
                                                                        "time.series.retrieval"="Time-series retrieval",
                                                                        "interoperability"="Interoperability of data and data systems"))
 
+col <- brewer.pal(n=5,'BrBG')
 
 # Horizontal stacked bar plot on the importance of pre-defined statement
 likert_perc <- ggplot(data=df_46_perc_melt_2, aes(x=variable, y=value, fill=Importance)) +
   geom_bar(stat='identity') +
   scale_fill_manual(values=brewer.pal(n=5,'BrBG')) +
-  labs(x="Data task", y="rel. Frequency") +
+  labs(x="Data task\n", y="%") +
   coord_flip() +
   theme_light()+
   ylim(-4,104)+
@@ -41,10 +42,10 @@ likert_perc <- ggplot(data=df_46_perc_melt_2, aes(x=variable, y=value, fill=Impo
   guides(fill=guide_legend(reverse=TRUE))+
   theme(legend.position='bottom',
         legend.title=element_blank(),
-        plot.title=element_text(size=14),
-        axis.text=element_text(size=14),
-        legend.text = element_text(size=12),
-        strip.text.x=element_text(size=12),
-        axis.title = element_text(size=14),
+        plot.title=element_text(size=16),
+        axis.text=element_text(size=16),
+        legend.text = element_text(size=16),
+        strip.text.x=element_text(size=16),
+        axis.title = element_text(size=16),
         aspect.ratio = 1/2) +
-  scale_x_discrete(labels = wrap_format(20)) 
+  scale_x_discrete(labels = wrap_format(26)) 

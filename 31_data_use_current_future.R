@@ -6,10 +6,6 @@ dataUse_other <- surveyData[,22]
 # Get frequencies for each option
 freqs <- lapply(dataUse_freq, function(x) as.data.frame(table(x)))
 
-# Bring frequencies to a vector
-#sums <- c(freqs$A1[,2],freqs$A2[,2],freqs$B1[,2],freqs$B2[,2],freqs$C1[,2],freqs$C2[,2],freqs$D1[,2],freqs$D2[,2],freqs$E1[,2],freqs$E2[,2],
-#          freqs$F1[,2],freqs$F2[,2],freqs$G1[,2],freqs$G2[,2])
-
 # Build a vector for current use
 currentUse <- c(freqs$A1[,2],freqs$B1[,2],freqs$C1[,2],freqs$D1[,2],freqs$E1[,2],
                 freqs$F1[,2],freqs$G1[,2])
@@ -20,6 +16,7 @@ futureUse <- c(freqs$A2[,2],freqs$B2[,2],freqs$C2[,2],freqs$D2[,2],freqs$E2[,2],
 
 # Build percentanges based on no of respondents
 currentUse_perc <- currentUse/no_of_respondents * 100
+
 # Future use basis is the no of respondents minus the ones, that are already using the data, 
 # as we expect that data that is currently used will also be used in the future
 futureUse_basis <- no_of_respondents - currentUse
@@ -46,28 +43,23 @@ colnames(df_future_sort) <- c('dataType_2', 'abs', 'rel', 'use')
 colnames(df_current_sort) <- c('dataType_2', 'abs', 'rel', 'use')
 
 
-coeff_2 <- 2.2
-coeff_1 <- 0.5
-
 # May plot with current use of data types
 plot_current <- ggplot(df_current_sort, aes(fill=dataType_2, y=abs, x=reorder(dataType_2, abs))) +
   geom_bar(stat='identity', width=0.6) +
-  geom_point(mapping=aes(y=rel/coeff_1), size=1.5, color='black', group=1) +
   scale_y_reverse(
-    name='n - Currently used',
-    # Add a second axis and specify its features
-    sec.axis = sec_axis(~.*coeff_1, name="rel. Frequency"),
+    name='n - Currently used\n',
     lim=c(200,0)) +
   labs(x="", Colour="Data use") +
   scale_fill_uchicago(palette='dark') +
   scale_x_discrete(labels=wrap_format(15)) +
   geom_text(aes(y=abs, label=abs),position=position_dodge(width=0.9), vjust=-0.8, color='white', size=5) +
-  geom_text(aes(label=round(rel,1)),position=position_dodge(width=0.9), vjust=2, color='black', size=5) +
+  geom_label(y=-200, aes(label=round(rel,1)),vjust=0, size=6, colour='white') +
   theme_light()+
   theme(legend.position='none',
-        plot.title=element_text(size=14),
-        axis.text.x=element_text(size=14),
-        axis.text.y=element_text(size=14),
+        plot.title=element_text(size=16),
+        axis.text.x=element_text(size=16),
+        axis.text.y=element_text(size=16),
+        axis.title=element_text(size=16),
         axis.text.y.right = element_text(colour = "black"),
         axis.title.y.right = element_text(colour = "black"))
 
@@ -75,25 +67,22 @@ plot_current <- ggplot(df_current_sort, aes(fill=dataType_2, y=abs, x=reorder(da
 positions <- c('Seasonal forecasts','Environmental forecasts', 'Meteorological forecasts','Climate reanalysis','Value-added products','Other Geospatial Data', 'Earth Observations')
 
 # Plot future use of data type
-plot_future <- ggplot(df_future_sort, aes(fill=dataType_2, y=futureUse, x=dataType_2)) +
+plot_future <- ggplot(df_future_sort, aes(fill=dataType_2, y=abs, x=dataType_2)) +
   geom_bar(stat='identity', width=0.6) +
-  geom_point(mapping=aes(x=dataType_2, y=futureUse_perc*coeff_2), size=1.5, color='black', group=1) +
   labs(x="", Colour="Data use") +
   scale_y_continuous(
-    name='n - Would like to use in future',
-    # Add a second axis and specify its features
-    sec.axis = sec_axis(~./coeff_2, name="rel. Frequency"),
-    lim=c(0,200)) +
+    name='n - Would like to use in future\n',
+    lim=c(0,150)) +
   scale_x_discrete(labels=wrap_format(15), limits=positions, position='top') +
   scale_fill_uchicago(palette='light',alpha=0.5) +
-  geom_text(aes(label=futureUse), position=position_dodge(width=0.9), vjust=2, color='black', size=5) +
-  geom_text(aes(y=futureUse_perc*coeff_2, label=round(futureUse_perc,1)),position=position_dodge(width=0.9), vjust=-1, color='black', size=5) +
+  geom_text(aes(label=abs), position=position_dodge(width=0.9), vjust=2, color='black', size=5) +
   theme_light() + 
-  geom_label(y=190, aes(label=futureUse_basis),vjust=0, size=5) +
+  geom_label(y=143, aes(label=round(rel,1)),vjust=0, size=6) +
   theme(legend.position='none',
-        plot.title=element_text(size=14),
-        axis.text.x=element_text(size=14),
-        axis.text.y=element_text(size=14),
+        plot.title=element_text(size=16),
+        axis.text.x=element_text(size=16),
+        axis.text.y=element_text(size=16),
+        axis.title=element_text(size=16),
         axis.text.y.right = element_text(colour = "black"),
         axis.title.y.right = element_text(colour = "black"))
 

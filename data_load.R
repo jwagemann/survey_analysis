@@ -14,6 +14,7 @@ library('grid')
 library('gtable')
 library('ggsci')
 library('RColorBrewer')
+library('cowplot')
 
 
 
@@ -463,7 +464,8 @@ df_671 <- df_new['X6.7.1']
 
 # 6.8 Would you be willing to pay for processing services
 
-df_68 <- df_new[,'X6.8']
+df_68 <- as.data.frame(df_new[,'X6.8'])
+nrow_68 <- nrow(na.omit(df_68))
 df_68_freq <- plyr::count(df_68)
 df_681 <- as.data.frame(df_new[,'X6.8.1'])
 nrow_681 <- nrow(na.omit(df_681))
@@ -475,15 +477,16 @@ df_68_freq_ord <- df_68_freq %>%
   arrange(-freq) %>% 
   mutate(x = factor(x, unique(x)))
 
-df_68_freq_ord <- df_68_freq_ord[-1,]
+df_68_freq_ord <- df_68_freq_ord[-4,]
 df_68_freq_ord$perc <- df_68_freq_ord[,2] / no_of_respondents * 100
 
 df_681_freq_ord <- df_681_freq %>%
   arrange(freq) %>% 
   mutate(cloud.service = factor(cloud.service, unique(cloud.service)))
 
+no_willingness_to_pay <- colSums(as.data.frame(df_68_freq_ord[c(1,3),2]))
 df_681_freq_ord <- df_681_freq_ord[c(-1,-5),]
-df_681_freq_ord$perc <- df_681_freq_ord[,2] / no_of_respondents * 100
+df_681_freq_ord$perc <- df_681_freq_ord[,2] / no_willingness_to_pay * 100
 
 df_6811 <- df_new[,'X6.8.1.1']
 

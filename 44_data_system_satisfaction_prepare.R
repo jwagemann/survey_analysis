@@ -64,7 +64,8 @@ df_44_merged_abs <- a_filter[,c(2,3)] %>% left_join(b_filter[,c(2,3)], by='satis
   left_join(g_filter[,c(2,3)], by='satisfaction')
 
 # Set colnames
-colnames(df_44_merged_abs) <- c('Satisfaction','Download Service','Cloud computing', 'OGC web service', 'Custom API', 'Virtual research infrastructure', 'Data Cube Technology','Array Database')
+colnames(df_44_merged_abs) <- c('Satisfaction','Download service','Cloud-computing infrastructure', 
+                                'OGC web service', 'Custom API / OpenDAP', 'Virtual research infrastructure', 'Data cube technology','Array / Spatial database')
 
 # Bring filtered data frame together - Relative frequencies
 df_44_merged_rel <- a_filter[,c(2,4)] %>% left_join(b_filter[,c(2,4)], by='satisfaction') %>% 
@@ -75,7 +76,9 @@ df_44_merged_rel <- a_filter[,c(2,4)] %>% left_join(b_filter[,c(2,4)], by='satis
   left_join(g_filter[,c(2,4)], by='satisfaction')
 
 # Set colnames
-colnames(df_44_merged_rel) <- c('Satisfaction','Download service','Cloud-computing infrastructure', 'OGC web service', 'Custom API / OpenDAP', 'Virtual research infrastructure', 'Data cube technology','Array / Spatial database')
+colnames(df_44_merged_rel) <- c('Satisfaction','Download service','Cloud-computing infrastructure', 
+                                'OGC web service', 'Custom API / OpenDAP', 'Virtual research infrastructure', 
+                                'Data cube technology','Array / Spatial database')
 
 # Set NAs to zero responses
 df_44_merged_rel[is.na(df_44_merged_rel)] <- 0
@@ -112,5 +115,6 @@ df_44_merged_melt <- reshape2::melt(df_44_merged_ord,id.vars='Satisfaction')
 df_44_merged_melt$variable <- factor(df_44_merged_melt$variable, levels=df_44_satisfaction_ord$data.systems)
 
 # Melt data frame for stacked bar and reorder data.systems based on satisfaction levels - Absolute numbers
-df_44_merged_abs_melt <- reshape2::melt(df_44_merged_ord_abs[,1:4], id.vars='Satisfaction')
+df_44_merged_abs_melt <- reshape2::melt(df_44_merged_ord_abs, id.vars='Satisfaction')
 df_44_merged_abs_melt$variable <- factor(df_44_merged_abs_melt$variable, levels=df_44_satisfaction_ord_abs$data.systems)
+
