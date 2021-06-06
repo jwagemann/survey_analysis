@@ -13,7 +13,7 @@ df_64_freq_ord <- df_64_freq_ord %>%
 
 # Horizontal bar plot
 barplot_64_freq <- ggplot(df_64_freq_ord, aes(fill=Statement,y=freq, x=Statement)) + 
-  geom_bar(stat="identity",width=0.5) +
+  geom_bar(stat="identity",width=0.7) +
   scale_fill_uchicago(palette='light', alpha=0.7) +
   coord_flip() +
   labs(x="Statement", y="n") +
@@ -28,4 +28,4 @@ barplot_64_freq <- ggplot(df_64_freq_ord, aes(fill=Statement,y=freq, x=Statement
         legend.text = element_text(size=12),
         strip.text.x=element_text(size=12),
         axis.title = element_text(size=14),
-        aspect.ratio=1)
+        aspect.ratio=1/2)

@@ -25,7 +25,7 @@ barplot_682 <- ggplot(df_682_freq_ord, aes(fill=amount,y=freq, x=amount)) +
   geom_text(aes(y=freq, label=freq), size=5, hjust=-0.3, color='black') +
   geom_label(y=97, aes(label=round(perc,1)), size=5) +
   theme_light() +
-  theme(legend.title=element_blank(), legend.position = "none", aspect.ratio=1/2,
+  theme(legend.title=element_blank(), legend.position = "none", aspect.ratio=1/3,
         axis.text=element_text(size=12),
         legend.text = element_text(size=12),
         strip.text.x=element_text(size=12),
