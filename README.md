@@ -1,4 +1,4 @@
-# User requirements of Big Earth Data - Survey 2019
+# Survey on user requirements of Big Earth Data 
 
 This repo hosts the code developed to analyse and visualise the responses from a user requirements survey. The programming language R was used for data analysis and visualisation.
 
