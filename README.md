@@ -13,7 +13,7 @@ The questionnaire and an anonymised version of the survey responses are availabl
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4075058.svg)](https://doi.org/10.5281/zenodo.4075058).
 
 ### Publications
-* Wagemann, J., Siemen, S., Seeger, B. and J. Bendix (2021): [Users of open Big Earth data - An analysis of the current state](https://www.sciencedirect.com/science/article/pii/S0098300421002077?via%3Dihub). Computer & Geosciences 2021. [![DOI:10.1016/j.cageo.2021.104916](http://img.shields.io/badge/DOI-10.1016/j.cageo.2021.104916-B31B1B.svg)](https://doi.org/10.1016/j.cageo.2021.104916)
+* Wagemann, J., Siemen, S., Seeger, B. and J. Bendix (2021): [Users of open Big Earth data - An analysis of the current state](https://www.sciencedirect.com/science/article/pii/S0098300421002077?via%3Dihub). Computers & Geosciences 2021. [![DOI:10.1016/j.cageo.2021.104916](http://img.shields.io/badge/DOI-10.1016/j.cageo.2021.104916-B31B1B.svg)](https://doi.org/10.1016/j.cageo.2021.104916)
 * Wagemann, J., Siemen, S., Seeger, B. and J. Bendix (2021): A user perspective on future cloud-based services for Big Earth data. International Journal of Digital Earth 2021. **(accepted)**
 
 ## Repository structure
