@@ -14,7 +14,7 @@ The questionnaire and an anonymised version of the survey responses are availabl
 
 ### Publications
 * Wagemann, J., Siemen, S., Seeger, B. and J. Bendix (2021): [Users of open Big Earth data - An analysis of the current state](https://www.sciencedirect.com/science/article/pii/S0098300421002077?via%3Dihub). Computers & Geosciences 157. [![DOI:10.1016/j.cageo.2021.104916](http://img.shields.io/badge/DOI-10.1016/j.cageo.2021.104916-B31B1B.svg)](https://doi.org/10.1016/j.cageo.2021.104916)
-* Wagemann, J., Siemen, S., Seeger, B. and J. Bendix (2021): A user perspective on future cloud-based services for Big Earth data. International Journal of Digital Earth 2021. [![DOI:10.1080/17538947.2021.1982031](https://img.shields.io/badge/DOI-10.1080/17538947.2021.1982031-B31B1B.svg)](https://doi.org/10.1080/17538947.2021.1982031)
+* Wagemann, J., Siemen, S., Seeger, B. and J. Bendix (2021): [A user perspective on future cloud-based services for Big Earth data](https://www.tandfonline.com/doi/abs/10.1080/17538947.2021.1982031). International Journal of Digital Earth 2021. [![DOI:10.1080/17538947.2021.1982031](https://img.shields.io/badge/DOI-10.1080/17538947.2021.1982031-B31B1B.svg)](https://doi.org/10.1080/17538947.2021.1982031)
 
 ## Repository structure
 The repository is structured based on the order of the survey questions. There are two base modules, who load the data, required libraries and define some functions:
